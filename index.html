@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Notion Navigation</title>
 
   <style>
     * {
@@ -14,58 +15,123 @@
       margin: 0;
       padding: 0;
       background: transparent;
-      font-family: Arial, sans-serif;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Arial, sans-serif;
     }
 
     .sidebar {
-      background-color: #DEA6AE;
-      color: #791611;
-      border-radius: 12px;
-      padding: 20px 22px;
       width: 100%;
+      background: #FFF9FA;
+      padding: 24px 14px;
+      border-radius: 12px;
     }
 
-    .sidebar-title {
-      font-size: 17px;
-      font-weight: 700;
-      margin: 0 0 16px;
+    .quote {
+      font-family: Georgia, serif;
+      font-size: 12px;
+      font-style: italic;
+      color: #791611;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 28px;
     }
 
-    .sidebar-links {
+    .menu {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 6px;
     }
 
-    .sidebar-links a {
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 11px 14px;
+      border-radius: 7px;
       color: #791611;
-      font-size: 15px;
-      font-weight: 500;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.2s ease;
     }
 
-    .sidebar-links a:hover {
-      opacity: 0.7;
+    .menu-item:hover {
+      background: #F5DDE1;
+    }
+
+    .menu-item.active {
+      background: #DEA6AE;
+      color: #791611;
+      font-weight: 600;
+    }
+
+    .icon {
+      width: 20px;
+      font-size: 19px;
+      text-align: center;
+      opacity: 0.8;
     }
   </style>
 </head>
 
 <body>
-  <div class="sidebar">
-    <div class="sidebar-title">
-      Navigation Side Bar
+
+  <aside class="sidebar">
+
+    <div class="quote">
+      Plan with purpose.<br>
+      Stay organized. Live your feminine best.
     </div>
 
-    <nav class="sidebar-links">
-      <a href="YOUR_NOTION_PAGE_URL_1" target="_blank">
-        ☁️ Pending To Do's
+    <nav class="menu">
+
+      <a href="YOUR_HOME_URL"
+         class="menu-item active"
+         target="_blank">
+        <span class="icon">⌂</span>
+        <span>Home</span>
       </a>
 
-      <a href="YOUR_NOTION_PAGE_URL_2" target="_blank">
-        ☁️ Knowledge Material
+      <a href="YOUR_PLANNER_URL"
+         class="menu-item"
+         target="_blank">
+        <span class="icon">▤</span>
+        <span>Planner</span>
       </a>
+
+      <a href="YOUR_TASKS_URL"
+         class="menu-item"
+         target="_blank">
+        <span class="icon">☑</span>
+        <span>Tasks</span>
+      </a>
+
+      <a href="YOUR_HABITS_URL"
+         class="menu-item"
+         target="_blank">
+        <span class="icon">▦</span>
+        <span>Habits</span>
+      </a>
+
+      <a href="YOUR_GOALS_URL"
+         class="menu-item"
+         target="_blank">
+        <span class="icon">◎</span>
+        <span>Goals</span>
+      </a>
+
+      <a href="YOUR_JOURNAL_URL"
+         class="menu-item"
+         target="_blank">
+        <span class="icon">▧</span>
+        <span>Journal</span>
+      </a>
+
     </nav>
-  </div>
+
+  </aside>
+
 </body>
 </html>
