@@ -20,17 +20,19 @@
     --background: #F5DFE5;
     --active: #8D2B36;
     --inactive: #BE677C;
+    --frame-padding: 16px;
   }
 
   * {
     box-sizing: border-box;
   }
 
-  html, body {
-    width: 100%;
-    height: 100%;
+  html,
+  body {
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
     background: var(--background);
   }
@@ -38,6 +40,15 @@
   body {
     font-family: "Antone", Arial, sans-serif;
     color: var(--active);
+  }
+
+  /* OUTER FRAME SPACING */
+
+  .widget-frame {
+    width: 100%;
+    height: 100%;
+    padding: var(--frame-padding);
+    background: var(--background);
   }
 
   /* RESPONSIVE CONTAINER */
@@ -163,9 +174,17 @@
     fill: none;
   }
 
-  @container (max-width: 350px) {
-    .mode {
-      letter-spacing: 0;
+  /* SMALL EMBEDS */
+
+  @media (max-width: 400px) {
+    :root {
+      --frame-padding: 12px;
+    }
+  }
+
+  @media (max-width: 250px) {
+    :root {
+      --frame-padding: 8px;
     }
   }
 </style>
@@ -173,78 +192,82 @@
 
 <body>
 
-<div class="pomodoro">
+<div class="widget-frame">
 
-  <!-- MODES -->
+  <div class="pomodoro">
 
-  <nav class="modes" aria-label="Timer modes">
+    <!-- TIMER MODES -->
 
-    <button
-      class="mode"
-      data-mode="short"
-      onclick="changeMode('short')">
-      SHORT BREAK
-    </button>
+    <nav class="modes" aria-label="Timer modes">
 
-    <button
-      class="mode active"
-      data-mode="focus"
-      onclick="changeMode('focus')">
-      FOCUS
-    </button>
+      <button
+        class="mode"
+        data-mode="short"
+        onclick="changeMode('short')">
+        SHORT BREAK
+      </button>
 
-    <button
-      class="mode"
-      data-mode="long"
-      onclick="changeMode('long')">
-      LONG BREAK
-    </button>
+      <button
+        class="mode active"
+        data-mode="focus"
+        onclick="changeMode('focus')">
+        FOCUS
+      </button>
 
-  </nav>
+      <button
+        class="mode"
+        data-mode="long"
+        onclick="changeMode('long')">
+        LONG BREAK
+      </button>
 
-  <!-- TIMER -->
+    </nav>
 
-  <div
-    class="timer"
-    id="timer"
-    role="timer"
-    aria-label="Time remaining">
-    15:00
-  </div>
+    <!-- TIMER DISPLAY -->
 
-  <!-- CONTROLS -->
+    <div
+      class="timer"
+      id="timer"
+      role="timer"
+      aria-label="Time remaining">
+      15:00
+    </div>
 
-  <div class="controls">
+    <!-- CONTROLS -->
 
-    <!-- PLAY / PAUSE -->
+    <div class="controls">
 
-    <button
-      class="control"
-      id="playPause"
-      onclick="toggleTimer()"
-      aria-label="Play timer"
-      title="Play / Pause">
+      <!-- PLAY / PAUSE -->
 
-      <svg id="playIcon" viewBox="0 0 24 24">
-        <path d="M6 3 L20 12 L6 21 Z"/>
-      </svg>
+      <button
+        class="control"
+        id="playPause"
+        onclick="toggleTimer()"
+        aria-label="Play timer"
+        title="Play / Pause">
 
-    </button>
+        <svg id="playIcon" viewBox="0 0 24 24">
+          <path d="M6 3 L20 12 L6 21 Z"/>
+        </svg>
 
-    <!-- RESET -->
+      </button>
 
-    <button
-      class="control"
-      onclick="resetTimer()"
-      aria-label="Reset timer"
-      title="Reset timer">
+      <!-- RESET -->
 
-      <svg viewBox="0 0 24 24">
-        <path d="M3 11a9 9 0 1 1 2.5 6.2"/>
-        <path d="M3 4v7h7"/>
-      </svg>
+      <button
+        class="control"
+        onclick="resetTimer()"
+        aria-label="Reset timer"
+        title="Reset timer">
 
-    </button>
+        <svg viewBox="0 0 24 24">
+          <path d="M3 11a9 9 0 1 1 2.5 6.2"/>
+          <path d="M3 4v7h7"/>
+        </svg>
+
+      </button>
+
+    </div>
 
   </div>
 
