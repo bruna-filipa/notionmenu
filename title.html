@@ -6,6 +6,8 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
+<title>My Personal Journal | Everyday Edition</title>
+
 <style>
   @font-face {
     font-family: "Dream Orphans";
@@ -26,8 +28,6 @@
   html, body {
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
     background: transparent;
     overflow: hidden;
   }
@@ -37,21 +37,66 @@
     top: 0;
     left: 0;
 
-    margin: 0;
-    padding: 0;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
 
     font-family: "Dream Orphans", Georgia, serif;
-    font-size: clamp(28px, 4vw, 52px);
     font-weight: 400;
-    line-height: 1;
     color: #402D19;
+    line-height: 1;
     text-align: left;
-    white-space: normal;
+    white-space: nowrap;
+  }
+
+  .title span {
+    display: block;
+    transform-origin: top left;
   }
 </style>
 </head>
 
 <body>
-<div class="title">My Personal Journal | Everyday Edition</div>
+
+<div class="title">
+  <span id="titleText">
+    My Personal Journal | Everyday Edition
+  </span>
+</div>
+
+<script>
+  const title = document.querySelector(".title");
+  const text = document.getElementById("titleText");
+
+  function resizeTitle() {
+    const availableWidth = title.clientWidth;
+    const availableHeight = title.clientHeight;
+
+    if (!availableWidth || !availableHeight) return;
+
+    // Start large, then calculate the best fit.
+    text.style.fontSize = "100px";
+
+    const naturalWidth = text.scrollWidth;
+    const naturalHeight = text.scrollHeight;
+
+    const scale = Math.min(
+      availableWidth / naturalWidth,
+      availableHeight / naturalHeight
+    );
+
+    text.style.fontSize = (100 * scale) + "px";
+  }
+
+  document.fonts.ready.then(resizeTitle);
+
+  window.addEventListener("resize", resizeTitle);
+
+  new ResizeObserver(resizeTitle).observe(title);
+</script>
+
 </body>
 </html>
