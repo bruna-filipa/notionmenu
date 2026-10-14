@@ -2,365 +2,896 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Romantic Pomodoro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-@font-face {
-  font-family: "Antone";
-  src: url("./fonts/Antone.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+  <title>Romantic Garden | Pomodoro</title>
 
-:root {
-  --background: #F5DFE5;
-  --active: #8D2B36;
-  --inactive: #BE677C;
-}
+  <style>
+    @font-face {
+      font-family: "Dream Orphans";
+      src: url("./fonts/Dream Orphans.otf") format("opentype");
+      font-display: swap;
+    }
 
-* {
-  box-sizing: border-box;
-}
+    :root {
+      --background: #F5DFE5;
+      --burgundy: #8D2B36;
+      --rose: #BE677C;
+      --white: #FFFFFF;
+    }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background: var(--background);
-}
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  font-family: "Antone", Arial, sans-serif;
-  color: var(--active);
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background: transparent;
+    }
 
-/* RESPONSIVE OUTER FRAME */
+    body {
+      font-family: "Dream Orphans", Georgia, serif;
+      -webkit-font-smoothing: antialiased;
+    }
 
-.widget-frame {
-  container-type: inline-size;
-  width: 100%;
-  max-width: 650px;
-  margin: 0 auto;
-  background: var(--background);
-}
+    button, input {
+      font: inherit;
+    }
 
-/* MAIN LAYOUT */
+    button {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-.pomodoro {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    .pomodoro {
+      container-type: inline-size;
+      width: 100%;
+      padding:
+        clamp(18px, 7cqw, 42px)
+        clamp(10px, 5cqw, 28px);
+      background: var(--background);
+      text-align: center;
+      color: var(--burgundy);
+    }
 
-  width: 100%;
-  padding:
-    clamp(18px, 7cqw, 42px)
-    clamp(10px, 5cqw, 28px);
+    .modes {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: clamp(6px, 2.5cqw, 16px);
+      margin-bottom: clamp(12px, 4cqw, 24px);
+    }
 
-  gap: clamp(16px, 6cqw, 32px);
-}
+    .mode-button {
+      padding: 7px 11px;
+      border: none;
+      border-radius: 5px;
+      background: transparent;
+      color: var(--rose);
+      font-size: clamp(11px, 3.3cqw, 15px);
+    }
 
-/* TIMER MODES */
+    .mode-button.active {
+      background: var(--burgundy);
+      color: var(--white);
+    }
 
-.modes {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: clamp(3px, 1cqw, 10px);
-}
+    .timer-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: clamp(12px, 4cqw, 24px);
+    }
 
-.mode {
-  flex: 1;
-  min-width: 0;
-  padding: 0;
+    .timer,
+    .timer-edit {
+      font-family: inherit;
+      font-size: clamp(38px, 17cqw, 105px);
+      line-height: 1.12;
+      letter-spacing: 0.02em;
+      font-variant-numeric: tabular-nums;
+      color: var(--burgundy);
+      text-align: center;
+    }
 
-  border: none;
-  background: transparent;
+    .timer {
+      cursor: text;
+      user-select: none;
+    }
 
-  color: var(--inactive);
-  font-family: "Antone", Arial, sans-serif;
-  font-size: clamp(8px, 2.6cqw, 17px);
-  font-weight: 400;
-  letter-spacing: 0.2px;
+    .timer.running {
+      cursor: default;
+    }
 
-  white-space: nowrap;
-  text-align: center;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
+    .timer-edit {
+      width: min(100%, 5.5em);
+      padding: 0;
+      margin: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+    }
 
-.mode.active,
-.mode:hover {
-  color: var(--active);
-}
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
 
-/* TIMER DISPLAY */
+    .main-button {
+      min-width: clamp(100px, 34cqw, 150px);
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background: var(--burgundy);
+      color: var(--white);
+      font-size: clamp(13px, 3.7cqw, 17px);
+    }
 
-.timer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    .icon-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      padding: 7px;
+      border: none;
+      background: transparent;
+      color: var(--burgundy);
+    }
 
-  width: 100%;
-  min-width: 0;
+    .icon-button svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
-  color: var(--active);
-  font-family: "Antone", Arial, sans-serif;
-  font-size: clamp(38px, 17cqw, 105px);
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-}
+    .sound-button {
+      opacity: 0.8;
+    }
 
-/* CONTROLS */
+    .sound-button.muted {
+      opacity: 0.45;
+    }
 
-.controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(20px, 7cqw, 42px);
-}
+    .status {
+      margin-top: 12px;
+      min-height: 1.4em;
+      color: var(--burgundy);
+      font-size: clamp(11px, 3cqw, 14px);
+    }
 
-.control {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    .mode-button:focus-visible,
+    .main-button:focus-visible,
+    .icon-button:focus-visible,
+    .timer:focus-visible {
+      outline: 2px solid var(--burgundy);
+      outline-offset: 3px;
+    }
 
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--active);
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
+    @container (max-width: 260px) {
+      .mode-button {
+        padding: 6px;
+        font-size: 11px;
+      }
 
-.control:hover {
-  opacity: 0.65;
-}
+      .controls {
+        gap: 4px;
+      }
 
-.control svg {
-  width: clamp(18px, 5cqw, 28px);
-  height: clamp(18px, 5cqw, 28px);
-
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* VERY NARROW NOTION COLUMNS */
-
-@container (max-width: 260px) {
-  .pomodoro {
-    padding: 16px 8px;
-    gap: 16px;
-  }
-
-  .mode {
-    font-size: 8px;
-    letter-spacing: 0;
-  }
-
-  .timer {
-    font-size: clamp(30px, 16cqw, 42px);
-  }
-}
-</style>
+      .icon-button {
+        width: 29px;
+        height: 29px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="widget-frame">
-
   <main class="pomodoro">
 
-    <nav class="modes" aria-label="Timer modes">
+    <div class="modes" aria-label="Timer mode">
 
       <button
-        class="mode"
-        data-mode="short"
-        onclick="changeMode('short')">
-        SHORT BREAK
-      </button>
-
-      <button
-        class="mode active"
+        class="mode-button active"
         data-mode="focus"
-        onclick="changeMode('focus')">
-        FOCUS
+        type="button"
+      >
+        Focus
       </button>
 
       <button
-        class="mode"
-        data-mode="long"
-        onclick="changeMode('long')">
-        LONG BREAK
+        class="mode-button"
+        data-mode="short"
+        type="button"
+      >
+        Short Break
       </button>
 
-    </nav>
+      <button
+        class="mode-button"
+        data-mode="long"
+        type="button"
+      >
+        Long Break
+      </button>
 
-    <div
-      class="timer"
-      id="timer"
-      role="timer"
-      aria-label="Time remaining">
-      15:00
+    </div>
+
+    <div class="timer-container" id="timerContainer">
+      <div
+        class="timer"
+        id="timer"
+        role="button"
+        tabindex="0"
+        aria-label="Edit timer duration"
+        title="Click to change timer duration"
+      >
+        15:00
+      </div>
     </div>
 
     <div class="controls">
 
       <button
-        class="control"
-        id="playPause"
-        onclick="toggleTimer()"
-        aria-label="Play timer"
-        title="Play / Pause">
-
-        <svg id="playIcon" viewBox="0 0 24 24">
-          <path d="M6 3 L20 12 L6 21 Z"/>
+        class="icon-button"
+        id="resetButton"
+        type="button"
+        aria-label="Reset timer"
+        title="Reset timer"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 11a9 9 0 1 1 2.6 6.4"/>
+          <path d="M3 4v7h7"/>
         </svg>
-
       </button>
 
       <button
-        class="control"
-        onclick="resetTimer()"
-        aria-label="Reset timer"
-        title="Reset timer">
+        class="main-button"
+        id="startButton"
+        type="button"
+      >
+        Start
+      </button>
 
-        <svg viewBox="0 0 24 24">
-          <path d="M3 11a9 9 0 1 1 2.5 6.2"/>
-          <path d="M3 4v7h7"/>
+      <button
+        class="icon-button sound-button"
+        id="soundButton"
+        type="button"
+        aria-label="Mute alarm"
+        aria-pressed="true"
+        title="Alarm on"
+      >
+        <svg
+          id="soundOnIcon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M11 5 6 9H3v6h3l5 4V5Z"/>
+          <path d="M15 9a4 4 0 0 1 0 6"/>
+          <path d="M18 6a8 8 0 0 1 0 12"/>
         </svg>
 
+        <svg
+          id="soundOffIcon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          style="display:none"
+        >
+          <path d="M11 5 6 9H3v6h3l5 4V5Z"/>
+          <path d="m16 9 5 6"/>
+          <path d="m21 9-5 6"/>
+        </svg>
       </button>
 
     </div>
 
+    <div
+      class="status"
+      id="status"
+      aria-live="polite"
+    ></div>
+
   </main>
 
-</div>
+  <script>
+    const DEFAULT_DURATIONS = {
+      focus: 15 * 60,
+      short: 5 * 60,
+      long: 30 * 60
+    };
 
-<script>
-const durations = {
-  short: 5 * 60,
-  focus: 15 * 60,
-  long: 30 * 60
-};
+    const LABELS = {
+      focus: "Focus",
+      short: "Short Break",
+      long: "Long Break"
+    };
 
-let currentMode = "focus";
-let remaining = durations.focus;
-let interval = null;
-let endTime = null;
+    const DURATION_KEY =
+      "romanticGardenPomodoroDurationsV1";
 
-const timerDisplay = document.getElementById("timer");
-const playPauseButton = document.getElementById("playPause");
-const playIcon = document.getElementById("playIcon");
+    const SOUND_KEY =
+      "romanticGardenPomodoroSound";
 
-const playSVG = `
-  <path d="M6 3 L20 12 L6 21 Z"/>
-`;
+    function loadDurations() {
+      const result = { ...DEFAULT_DURATIONS };
 
-const pauseSVG = `
-  <path d="M8 4v16 M16 4v16"/>
-`;
+      try {
+        const saved = JSON.parse(
+          localStorage.getItem(DURATION_KEY)
+        );
 
-function displayTime() {
-  const minutes = Math.floor(remaining / 60);
-  const seconds = remaining % 60;
+        if (saved && typeof saved === "object") {
+          for (const mode of Object.keys(result)) {
+            const value = saved[mode];
 
-  timerDisplay.textContent =
-    String(minutes).padStart(2, "0") + ":" +
-    String(seconds).padStart(2, "0");
-}
+            if (
+              Number.isInteger(value) &&
+              value >= 1 &&
+              value <= 5999 * 60 + 59
+            ) {
+              result[mode] = value;
+            }
+          }
+        }
+      } catch (error) {
+        console.warn(
+          "Unable to load timer durations.",
+          error
+        );
+      }
 
-function updateIcon() {
-  const isRunning = interval !== null;
-
-  playIcon.innerHTML = isRunning ? pauseSVG : playSVG;
-
-  playPauseButton.setAttribute(
-    "aria-label",
-    isRunning ? "Pause timer" : "Play timer"
-  );
-}
-
-function stopTimer() {
-  if (interval !== null) {
-    clearInterval(interval);
-    interval = null;
-  }
-
-  endTime = null;
-  updateIcon();
-}
-
-function changeMode(mode) {
-  stopTimer();
-
-  currentMode = mode;
-  remaining = durations[mode];
-
-  document.querySelectorAll(".mode").forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.mode === mode
-    );
-  });
-
-  displayTime();
-}
-
-function toggleTimer() {
-  if (interval !== null) {
-    remaining = Math.max(
-      0,
-      Math.ceil((endTime - Date.now()) / 1000)
-    );
-
-    stopTimer();
-    displayTime();
-    return;
-  }
-
-  if (remaining === 0) {
-    remaining = durations[currentMode];
-  }
-
-  endTime = Date.now() + remaining * 1000;
-
-  interval = setInterval(() => {
-    remaining = Math.max(
-      0,
-      Math.ceil((endTime - Date.now()) / 1000)
-    );
-
-    displayTime();
-
-    if (remaining === 0) {
-      stopTimer();
+      return result;
     }
-  }, 250);
 
-  updateIcon();
-}
+    const durations = loadDurations();
 
-function resetTimer() {
-  stopTimer();
-  remaining = durations[currentMode];
-  displayTime();
-}
+    const timerContainer =
+      document.getElementById("timerContainer");
 
-displayTime();
-updateIcon();
-</script>
+    const timerDisplay =
+      document.getElementById("timer");
+
+    const startButton =
+      document.getElementById("startButton");
+
+    const resetButton =
+      document.getElementById("resetButton");
+
+    const soundButton =
+      document.getElementById("soundButton");
+
+    const soundOnIcon =
+      document.getElementById("soundOnIcon");
+
+    const soundOffIcon =
+      document.getElementById("soundOffIcon");
+
+    const statusDisplay =
+      document.getElementById("status");
+
+    const modeButtons =
+      document.querySelectorAll(".mode-button");
+
+    let currentMode = "focus";
+    let remainingSeconds = durations.focus;
+    let running = false;
+    let finished = false;
+    let deadline = null;
+    let intervalId = null;
+    let editing = false;
+
+    let soundEnabled = true;
+
+    try {
+      soundEnabled =
+        localStorage.getItem(SOUND_KEY) !== "false";
+    } catch (error) {
+      console.warn(
+        "Unable to load sound preference.",
+        error
+      );
+    }
+
+    // Vintage bell audio
+
+    let audioContext = null;
+
+    function getAudioContext() {
+      const AudioContextClass =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+      if (!AudioContextClass) return null;
+
+      if (!audioContext) {
+        audioContext = new AudioContextClass();
+      }
+
+      return audioContext;
+    }
+
+    function unlockAudio() {
+      if (!soundEnabled) return;
+
+      try {
+        const context = getAudioContext();
+
+        if (context && context.state === "suspended") {
+          context.resume().catch(() => {});
+        }
+      } catch (error) {
+        console.warn("Audio unavailable.", error);
+      }
+    }
+
+    function ringBell(startTime, volume = 0.13) {
+      const context = getAudioContext();
+
+      if (!context || context.state !== "running") {
+        return;
+      }
+
+      const harmonics = [
+        { ratio: 1.0, gain: 1.0 },
+        { ratio: 2.0, gain: 0.42 },
+        { ratio: 2.71, gain: 0.20 },
+        { ratio: 4.08, gain: 0.10 }
+      ];
+
+      const baseFrequency = 660;
+      const duration = 2.2;
+
+      harmonics.forEach(harmonic => {
+        const oscillator =
+          context.createOscillator();
+
+        const envelope =
+          context.createGain();
+
+        oscillator.type = "sine";
+
+        oscillator.frequency.setValueAtTime(
+          baseFrequency * harmonic.ratio,
+          startTime
+        );
+
+        envelope.gain.setValueAtTime(
+          0.0001,
+          startTime
+        );
+
+        envelope.gain.exponentialRampToValueAtTime(
+          Math.max(
+            0.0002,
+            volume * harmonic.gain
+          ),
+          startTime + 0.012
+        );
+
+        envelope.gain.exponentialRampToValueAtTime(
+          0.0001,
+          startTime + duration
+        );
+
+        oscillator.connect(envelope);
+        envelope.connect(context.destination);
+
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration + 0.05);
+      });
+    }
+
+    function scheduleBell(context) {
+      const now = context.currentTime + 0.03;
+
+      ringBell(now, 0.13);
+      ringBell(now + 0.65, 0.10);
+    }
+
+    function playVintageBell() {
+      if (!soundEnabled) return;
+
+      try {
+        const context = getAudioContext();
+
+        if (!context) return;
+
+        if (context.state === "suspended") {
+          context.resume().then(() => {
+            if (soundEnabled) {
+              scheduleBell(context);
+            }
+          }).catch(() => {});
+        } else {
+          scheduleBell(context);
+        }
+      } catch (error) {
+        console.warn(
+          "Unable to play the alarm.",
+          error
+        );
+      }
+    }
+
+    // Timer formatting and editing
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+
+      return (
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(secs).padStart(2, "0")
+      );
+    }
+
+    function parseTime(value) {
+      const match = value.trim().match(
+        /^(\d{1,4}):([0-5]\d)$/
+      );
+
+      if (!match) return null;
+
+      const minutes = Number(match[1]);
+      const seconds = Number(match[2]);
+      const total = minutes * 60 + seconds;
+
+      if (total < 1 || total > 5999 * 60 + 59) {
+        return null;
+      }
+
+      return total;
+    }
+
+    function saveDurations() {
+      try {
+        localStorage.setItem(
+          DURATION_KEY,
+          JSON.stringify(durations)
+        );
+      } catch (error) {
+        console.warn(
+          "Unable to save timer durations.",
+          error
+        );
+      }
+    }
+
+    function startEditing() {
+      if (running || editing) return;
+
+      editing = true;
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "timer-edit";
+      input.value = formatTime(remainingSeconds);
+      input.setAttribute(
+        "aria-label",
+        "Timer duration in minutes and seconds"
+      );
+      input.setAttribute(
+        "inputmode",
+        "numeric"
+      );
+      input.maxLength = 7;
+
+      timerDisplay.style.display = "none";
+      timerContainer.appendChild(input);
+
+      input.focus();
+      input.select();
+
+      let completed = false;
+
+      function finishEditing(save) {
+        if (completed) return;
+        completed = true;
+
+        if (save) {
+          const parsed = parseTime(input.value);
+
+          if (parsed !== null) {
+            durations[currentMode] = parsed;
+            remainingSeconds = parsed;
+            finished = false;
+            statusDisplay.textContent = "";
+            saveDurations();
+          } else {
+            statusDisplay.textContent =
+              "Use MM:SS, for example 25:00";
+          }
+        }
+
+        input.remove();
+        timerDisplay.style.display = "";
+        editing = false;
+        render();
+      }
+
+      input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          finishEditing(true);
+        }
+
+        if (event.key === "Escape") {
+          event.preventDefault();
+          finishEditing(false);
+        }
+      });
+
+      input.addEventListener("blur", () => {
+        finishEditing(true);
+      });
+    }
+
+    timerDisplay.addEventListener(
+      "click",
+      startEditing
+    );
+
+    timerDisplay.addEventListener(
+      "keydown",
+      event => {
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          startEditing();
+        }
+      }
+    );
+
+    function render() {
+      timerDisplay.textContent =
+        formatTime(remainingSeconds);
+
+      timerDisplay.classList.toggle(
+        "running",
+        running
+      );
+
+      timerDisplay.setAttribute(
+        "aria-disabled",
+        String(running)
+      );
+
+      document.title =
+        formatTime(remainingSeconds) +
+        " | Romantic Garden";
+
+      if (running) {
+        startButton.textContent = "Pause";
+      } else if (finished) {
+        startButton.textContent = "Restart";
+      } else if (
+        remainingSeconds < durations[currentMode]
+      ) {
+        startButton.textContent = "Resume";
+      } else {
+        startButton.textContent = "Start";
+      }
+
+      modeButtons.forEach(button => {
+        const isActive =
+          button.dataset.mode === currentMode;
+
+        button.classList.toggle(
+          "active",
+          isActive
+        );
+
+        button.setAttribute(
+          "aria-pressed",
+          String(isActive)
+        );
+      });
+    }
+
+    function stopInterval() {
+      if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    }
+
+    function finishTimer() {
+      stopInterval();
+
+      running = false;
+      finished = true;
+      deadline = null;
+      remainingSeconds = 0;
+
+      statusDisplay.textContent =
+        LABELS[currentMode] + " complete!";
+
+      playVintageBell();
+      render();
+    }
+
+    function tick() {
+      if (!running || deadline === null) return;
+
+      remainingSeconds = Math.max(
+        0,
+        Math.ceil(
+          (deadline - Date.now()) / 1000
+        )
+      );
+
+      if (remainingSeconds <= 0) {
+        finishTimer();
+      } else {
+        render();
+      }
+    }
+
+    function startTimer() {
+      if (editing) return;
+
+      unlockAudio();
+
+      if (finished) {
+        remainingSeconds = durations[currentMode];
+        finished = false;
+      }
+
+      if (running) return;
+
+      running = true;
+
+      deadline =
+        Date.now() + remainingSeconds * 1000;
+
+      statusDisplay.textContent = "";
+
+      stopInterval();
+      intervalId = setInterval(tick, 250);
+
+      render();
+    }
+
+    function pauseTimer() {
+      if (!running) return;
+
+      tick();
+
+      if (!running) return;
+
+      running = false;
+      deadline = null;
+
+      stopInterval();
+      render();
+    }
+
+    function resetTimer() {
+      stopInterval();
+
+      running = false;
+      finished = false;
+      deadline = null;
+
+      remainingSeconds = durations[currentMode];
+
+      statusDisplay.textContent = "";
+      render();
+    }
+
+    function switchMode(mode) {
+      if (!Object.prototype.hasOwnProperty.call(
+        durations,
+        mode
+      )) {
+        return;
+      }
+
+      if (editing) return;
+
+      currentMode = mode;
+      resetTimer();
+    }
+
+    function updateSoundButton() {
+      soundOnIcon.style.display =
+        soundEnabled ? "block" : "none";
+
+      soundOffIcon.style.display =
+        soundEnabled ? "none" : "block";
+
+      soundButton.classList.toggle(
+        "muted",
+        !soundEnabled
+      );
+
+      soundButton.setAttribute(
+        "aria-label",
+        soundEnabled
+          ? "Mute alarm"
+          : "Enable alarm"
+      );
+
+      soundButton.setAttribute(
+        "aria-pressed",
+        String(soundEnabled)
+      );
+
+      soundButton.title =
+        soundEnabled
+          ? "Alarm on"
+          : "Alarm off";
+    }
+
+    startButton.addEventListener("click", () => {
+      if (running) {
+        pauseTimer();
+      } else {
+        startTimer();
+      }
+    });
+
+    resetButton.addEventListener(
+      "click",
+      resetTimer
+    );
+
+    soundButton.addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+
+      try {
+        localStorage.setItem(
+          SOUND_KEY,
+          String(soundEnabled)
+        );
+      } catch (error) {
+        console.warn(
+          "Unable to save sound preference.",
+          error
+        );
+      }
+
+      if (soundEnabled) {
+        unlockAudio();
+      }
+
+      updateSoundButton();
+    });
+
+    modeButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        switchMode(button.dataset.mode);
+      });
+    });
+
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (!document.hidden && running) {
+          tick();
+        }
+      }
+    );
+
+    render();
+    updateSoundButton();
+  </script>
 
 </body>
 </html>
