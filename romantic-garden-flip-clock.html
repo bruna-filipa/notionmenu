@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Romantic Garden Flip Clock</title>
+<style>
+@font-face{font-family:'Dream Orphans';src:url('./fonts/Dream%20Orphans.otf') format('opentype');font-display:swap}
+:root{--espresso:#402D19;--ivory:#FFF9F3}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:transparent!important}
+body{min-height:115px;display:flex;align-items:center;justify-content:center;padding:6px;overflow:hidden}
+.clock{display:flex;justify-content:center;align-items:center;gap:clamp(7px,2vw,15px)}
+.pair{display:flex;gap:clamp(3px,1vw,7px)}
+.digit{position:relative;width:clamp(38px,10vw,73px);height:clamp(62px,16vw,102px);perspective:450px;color:var(--ivory);font-family:'Dream Orphans',Georgia,serif;font-size:clamp(45px,12vw,80px);font-weight:400;line-height:1}
+.half{position:absolute;left:0;width:100%;height:50%;overflow:hidden;background:var(--espresso);backface-visibility:hidden}
+.top{top:0;border-radius:7px 7px 0 0}
+.bottom{bottom:0;border-radius:0 0 7px 7px}
+.half span{position:absolute;left:0;width:100%;height:200%;display:flex;justify-content:center;align-items:center}
+.top span{top:0;transform:translateY(-7px)}.bottom span{bottom:-100%;transform:translateY(-7px)}
+.seam{position:absolute;top:calc(50% - 1px);left:0;right:0;height:2px;background:#26180d;z-index:4}
+.flap{z-index:5;transform-origin:bottom center;animation:fold .25s ease-in forwards}
+.flap.bottom{transform-origin:top center;animation:unfold .3s .25s ease-out both}
+.separator{font-family:'Dream Orphans',Georgia,serif;font-size:clamp(32px,8vw,58px);color:var(--espresso);transform:translateY(-4px)}
+@keyframes fold{from{transform:rotateX(0)}to{transform:rotateX(-90deg)}}
+@keyframes unfold{from{transform:rotateX(90deg)}to{transform:rotateX(0)}}
+@media(max-width:420px){body{min-height:90px;padding:3px}.digit{width:clamp(34px,11vw,44px);height:clamp(53px,17vw,68px);font-size:clamp(40px,13vw,51px)}.clock{gap:7px}.pair{gap:3px}.separator{font-size:35px}}
+</style>
+</head>
+<body>
+<div class="clock" role="timer" aria-label="Current UK time, hours and minutes">
+  <div class="pair" id="hours"></div><span class="separator" aria-hidden="true">:</span><div class="pair" id="minutes"></div>
+</div>
+<script>
+const nodes=[];
+function half(cls,value){const el=document.createElement('div');el.className='half '+cls;const span=document.createElement('span');span.textContent=value;el.append(span);return el}
+for(const id of ['hours','minutes']){const parent=document.getElementById(id);for(let i=0;i<2;i++){const digit=document.createElement('div');digit.className='digit';digit.append(half('top','0'),half('bottom','0'));const seam=document.createElement('div');seam.className='seam';digit.append(seam);parent.append(digit);nodes.push(digit)}}
+function updateDigit(el,next){const top=el.querySelector('.top:not(.flap)'),bottom=el.querySelector('.bottom:not(.flap)');const old=top.firstChild.textContent;if(old===next)return;const first=half('top flap',old),second=half('bottom flap',next);el.append(first,second);setTimeout(()=>{top.firstChild.textContent=next},250);setTimeout(()=>{bottom.firstChild.textContent=next;first.remove();second.remove()},570)}
+let initial=true;
+function tick(){const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date()).replace(/\D/g,'').slice(0,4);[...parts].forEach((c,i)=>{if(initial){nodes[i].querySelectorAll('.half span').forEach(s=>s.textContent=c)}else updateDigit(nodes[i],c)});initial=false}
+tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
