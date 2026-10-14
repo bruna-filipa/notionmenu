@@ -8,165 +8,228 @@
 <title>Romantic Calendar</title>
 
 <style>
-  @font-face {
-    font-family: "Antone";
-    src: url("./fonts/Antone.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
+@font-face {
+  font-family: "Antone";
+  src: url("./fonts/Antone.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
-  :root {
-    --background: #F5DFE5;
-    --primary: #8D2B36;
-    --secondary: #BE677C;
-  }
+:root {
+  --background: #F5DFE5;
+  --primary: #8D2B36;
+  --secondary: #BE677C;
+}
 
-  * {
-    box-sizing: border-box;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--background);
-  }
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: var(--background);
+}
 
-  body {
-    font-family: "Antone", Arial, sans-serif;
-    color: var(--primary);
-  }
+body {
+  font-family: "Antone", Arial, sans-serif;
+  color: var(--primary);
+}
+
+/* MAIN CALENDAR */
+
+.calendar {
+  container-type: inline-size;
+
+  width: 100%;
+  min-height: 100%;
+  padding: 4cqw 4cqw 5cqw;
+
+  background: var(--background);
+}
+
+/* MONTH HEADER */
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 5fr 1fr;
+  align-items: center;
+
+  width: 100%;
+  margin-bottom: 7cqw;
+}
+
+.month-title {
+  margin: 0;
+  text-align: center;
+
+  font-family: "Antone", Arial, sans-serif;
+  font-size: clamp(20px, 7.5cqw, 85px);
+  font-weight: 400;
+  letter-spacing: 0.4cqw;
+  line-height: 1.2;
+
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+  border: none;
+  padding: 5px;
+
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.arrow svg {
+  width: clamp(16px, 3.5cqw, 40px);
+  height: clamp(16px, 3.5cqw, 40px);
+
+  stroke: currentColor;
+  stroke-width: 1.7;
+  fill: none;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.arrow:hover {
+  opacity: 0.65;
+}
+
+/* WEEKDAY LABELS */
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  width: 100%;
+  margin-bottom: 4cqw;
+}
+
+.weekday {
+  text-align: center;
+
+  font-family: "Antone", Arial, sans-serif;
+  font-size: clamp(12px, 4.5cqw, 48px);
+  font-weight: 400;
+  line-height: 1.2;
+
+  color: var(--secondary);
+}
+
+/* DATE GRID */
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-auto-rows: auto;
+
+  width: 100%;
+  row-gap: 1cqw;
+}
+
+.day {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  aspect-ratio: 1 / 1;
+
+  font-family: "Antone", Arial, sans-serif;
+  font-size: clamp(13px, 5.3cqw, 55px);
+  font-weight: 400;
+  line-height: 1;
+
+  color: var(--primary);
+  text-align: center;
+  isolation: isolate;
+}
+
+.day.empty {
+  visibility: hidden;
+}
+
+/* TODAY HIGHLIGHT */
+
+.day.today {
+  color: var(--background);
+}
+
+.day.today::before {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+
+  width: 88%;
+  aspect-ratio: 1 / 1;
+
+  border-radius: 50%;
+  background: var(--secondary);
+}
+
+/* SMALL NOTION EMBEDS */
+
+@container (max-width: 400px) {
 
   .calendar {
-    container-type: inline-size;
-    width: 100%;
-    min-height: 100%;
-    padding: 4% 4% 5%;
-    background: var(--background);
+    padding: 4cqw 3cqw;
   }
 
-  /* MONTH HEADER */
-
   .header {
-    display: grid;
-    grid-template-columns: 1fr 5fr 1fr;
-    align-items: center;
-    margin-bottom: 8%;
+    margin-bottom: 6cqw;
   }
 
   .month-title {
-    text-align: center;
-    font-size: clamp(22px, 8cqw, 85px);
-    font-weight: 400;
-    letter-spacing: 0.45cqw;
-    line-height: 1.2;
-    margin: 0;
-    white-space: nowrap;
-  }
-
-  .arrow {
-    border: none;
-    background: transparent;
-    color: var(--primary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-  }
-
-  .arrow svg {
-    width: clamp(15px, 4cqw, 40px);
-    height: clamp(15px, 4cqw, 40px);
-    stroke: currentColor;
-    stroke-width: 1.7;
-    fill: none;
-    stroke-linecap: square;
-    stroke-linejoin: miter;
-  }
-
-  .arrow:hover {
-    opacity: 0.65;
-  }
-
-  /* WEEKDAY LABELS */
-
-  .weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    margin-bottom: 5%;
+    font-size: 7cqw;
+    letter-spacing: 0.15cqw;
   }
 
   .weekday {
-    color: var(--secondary);
-    text-align: center;
-    font-size: clamp(12px, 4.5cqw, 48px);
-    letter-spacing: 0.1cqw;
-    line-height: 1.2;
-  }
-
-  /* DATE GRID */
-
-  .days {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    grid-auto-rows: 1fr;
-    row-gap: 1.2cqw;
+    font-size: 4cqw;
   }
 
   .day {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1 / 1;
-
-    font-size: clamp(13px, 5.5cqw, 55px);
-    color: var(--primary);
-    font-weight: 400;
-    line-height: 1;
-
-    position: relative;
-    z-index: 0;
+    font-size: 5cqw;
   }
 
-  .day.empty {
-    visibility: hidden;
+  .days {
+    row-gap: 0;
+  }
+}
+
+/* VERY NARROW EMBEDS */
+
+@container (max-width: 250px) {
+
+  .month-title {
+    font-size: 6.5cqw;
+    letter-spacing: 0;
   }
 
-  .day.today {
-    color: var(--background);
+  .weekday {
+    font-size: 3.8cqw;
   }
 
-  .day.today::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-
-    width: 88%;
-    height: 88%;
-    border-radius: 50%;
-    background: var(--secondary);
+  .day {
+    font-size: 4.8cqw;
   }
 
-  @container (max-width: 350px) {
-    .calendar {
-      padding: 5% 3%;
-    }
-
-    .header {
-      margin-bottom: 9%;
-    }
-
-    .month-title {
-      letter-spacing: 0.2cqw;
-    }
-
-    .days {
-      row-gap: 0;
-    }
+  .header {
+    margin-bottom: 5cqw;
   }
+}
+
 </style>
 </head>
 
@@ -206,111 +269,123 @@
 
   </div>
 
-  <!-- WEEKDAY HEADINGS -->
+  <!-- MONDAY TO SUNDAY -->
 
   <div class="weekdays">
-    <div class="weekday">S</div>
     <div class="weekday">M</div>
     <div class="weekday">T</div>
     <div class="weekday">W</div>
     <div class="weekday">T</div>
     <div class="weekday">F</div>
     <div class="weekday">S</div>
+    <div class="weekday">S</div>
   </div>
 
-  <!-- CALENDAR DATES -->
+  <!-- CALENDAR DAYS -->
 
   <div class="days" id="calendarDays"></div>
 
 </div>
 
 <script>
-  const today = new Date();
+const today = new Date();
 
-  let currentMonth = today.getMonth();
-  let currentYear = today.getFullYear();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
 
-  const monthNames = [
-    "JANUARY",
-    "FEBRUARY",
-    "MARCH",
-    "APRIL",
-    "MAY",
-    "JUNE",
-    "JULY",
-    "AUGUST",
-    "SEPTEMBER",
-    "OCTOBER",
-    "NOVEMBER",
-    "DECEMBER"
-  ];
+const monthNames = [
+  "JANUARY",
+  "FEBRUARY",
+  "MARCH",
+  "APRIL",
+  "MAY",
+  "JUNE",
+  "JULY",
+  "AUGUST",
+  "SEPTEMBER",
+  "OCTOBER",
+  "NOVEMBER",
+  "DECEMBER"
+];
 
-  const monthTitle = document.getElementById("monthTitle");
-  const calendarDays = document.getElementById("calendarDays");
+const monthTitle = document.getElementById("monthTitle");
+const calendarDays = document.getElementById("calendarDays");
 
-  function renderCalendar() {
+/* RENDER CALENDAR */
 
-    calendarDays.innerHTML = "";
+function renderCalendar() {
 
-    monthTitle.textContent = monthNames[currentMonth];
+  calendarDays.innerHTML = "";
 
-    const firstDay = new Date(
-      currentYear,
-      currentMonth,
-      1
-    ).getDay();
+  monthTitle.textContent = monthNames[currentMonth];
 
-    const daysInMonth = new Date(
-      currentYear,
-      currentMonth + 1,
-      0
-    ).getDate();
+  // Convert Sunday-first indexing to Monday-first
+  const firstDay = (
+    new Date(currentYear, currentMonth, 1).getDay() + 6
+  ) % 7;
 
-    // Add empty spaces before the first day
-    for (let i = 0; i < firstDay; i++) {
-      const empty = document.createElement("div");
-      empty.className = "day empty";
-      calendarDays.appendChild(empty);
-    }
+  const daysInMonth = new Date(
+    currentYear,
+    currentMonth + 1,
+    0
+  ).getDate();
 
-    // Add each date
-    for (let day = 1; day <= daysInMonth; day++) {
+  // Empty spaces before the first day
+  for (let i = 0; i < firstDay; i++) {
 
-      const dayElement = document.createElement("div");
-      dayElement.className = "day";
-      dayElement.textContent = day;
+    const empty = document.createElement("div");
+    empty.className = "day empty";
 
-      // Highlight today's date
-      if (
-        day === today.getDate() &&
-        currentMonth === today.getMonth() &&
-        currentYear === today.getFullYear()
-      ) {
-        dayElement.classList.add("today");
-      }
-
-      calendarDays.appendChild(dayElement);
-    }
+    calendarDays.appendChild(empty);
   }
 
-  function changeMonth(direction) {
+  // Create days
+  for (let day = 1; day <= daysInMonth; day++) {
 
-    currentMonth += direction;
+    const dayElement = document.createElement("div");
+    dayElement.className = "day";
+    dayElement.textContent = day;
 
-    if (currentMonth > 11) {
-      currentMonth = 0;
-      currentYear++;
+    // Highlight today's date
+    const actualToday = new Date();
+
+    if (
+      day === actualToday.getDate() &&
+      currentMonth === actualToday.getMonth() &&
+      currentYear === actualToday.getFullYear()
+    ) {
+      dayElement.classList.add("today");
     }
 
-    if (currentMonth < 0) {
-      currentMonth = 11;
-      currentYear--;
-    }
+    calendarDays.appendChild(dayElement);
+  }
+}
 
-    renderCalendar();
+/* CHANGE MONTH */
+
+function changeMonth(direction) {
+
+  currentMonth += direction;
+
+  if (currentMonth > 11) {
+    currentMonth = 0;
+    currentYear++;
+  }
+
+  if (currentMonth < 0) {
+    currentMonth = 11;
+    currentYear--;
   }
 
   renderCalendar();
+}
+
+/* INITIALISE */
+
+renderCalendar();
+
+// Refresh today's highlight periodically
+setInterval(renderCalendar, 60000);
 </script>
 
 </body>
