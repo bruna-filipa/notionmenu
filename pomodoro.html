@@ -9,8 +9,8 @@
 
   <style>
     @font-face {
-      font-family: "Dream Orphans";
-      src: url("./fonts/Dream Orphans.otf") format("opentype");
+      font-family: "Antone";
+      src: url("./fonts/Antone.ttf") format("truetype");
       font-display: swap;
     }
 
@@ -34,7 +34,7 @@
     }
 
     body {
-      font-family: "Dream Orphans", Georgia, serif;
+      font-family: "Antone", Georgia, serif;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -91,7 +91,7 @@
 
     .timer,
     .timer-edit {
-      font-family: inherit;
+      font-family: "Antone", Georgia, serif;
       font-size: clamp(38px, 17cqw, 105px);
       line-height: 1.12;
       letter-spacing: 0.02em;
@@ -205,19 +205,19 @@
     <div class="modes" aria-label="Timer mode">
 
       <button
-        class="mode-button active"
-        data-mode="focus"
-        type="button"
-      >
-        Focus
-      </button>
-
-      <button
         class="mode-button"
         data-mode="short"
         type="button"
       >
         Short Break
+      </button>
+
+      <button
+        class="mode-button active"
+        data-mode="focus"
+        type="button"
+      >
+        Focus
       </button>
 
       <button
