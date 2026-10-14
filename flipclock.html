@@ -25,12 +25,12 @@
 
 html,
 body {
-  margin: 0;
-  padding: 0;
   width: 100%;
   height: 100%;
-  background: transparent !important;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
+  background: transparent !important;
 }
 
 body {
@@ -43,10 +43,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(4px, 1vw, 12px);
+  gap: 0;
   width: 100%;
   height: 100%;
-  padding: 8px;
+  padding: 4px;
 }
 
 .digit {
@@ -54,35 +54,44 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  width: clamp(30px, 13%, 150px);
-  aspect-ratio: 0.72;
+  flex-shrink: 0;
 
   background: var(--espresso);
   color: var(--ivory);
 
-  border-radius: clamp(4px, 0.8vw, 10px);
+  border-radius: 6px;
   overflow: hidden;
 
   font-family: "Dream Orphans", Georgia, serif;
-  font-size: clamp(35px, 9vw, 170px);
   font-weight: normal;
   font-variant-numeric: lining-nums;
   line-height: 1;
+
+  perspective: 600px;
 }
 
 .digit span {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
   line-height: 1;
   transform: translateY(-2%);
+  transform-origin: center;
 }
 
 .separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
   color: var(--espresso);
   font-family: "Dream Orphans", Georgia, serif;
-  font-size: clamp(35px, 8vw, 140px);
   line-height: 1;
-  align-self: center;
 }
 
 .digit.flip span {
@@ -117,17 +126,83 @@ body {
 <body>
 
 <div class="clock" aria-label="Current UK time">
-  <div class="digit"><span id="h1">0</span></div>
-  <div class="digit"><span id="h2">0</span></div>
+
+  <div class="digit">
+    <span id="h1">0</span>
+  </div>
+
+  <div class="digit">
+    <span id="h2">0</span>
+  </div>
 
   <div class="separator">:</div>
 
-  <div class="digit"><span id="m1">0</span></div>
-  <div class="digit"><span id="m2">0</span></div>
+  <div class="digit">
+    <span id="m1">0</span>
+  </div>
+
+  <div class="digit">
+    <span id="m2">0</span>
+  </div>
+
 </div>
 
 <script>
 const digitIds = ["h1", "h2", "m1", "m2"];
+
+const clock = document.querySelector(".clock");
+const digits = document.querySelectorAll(".digit");
+const separator = document.querySelector(".separator");
+
+function resizeClock() {
+  const availableWidth = Math.max(
+    0,
+    clock.clientWidth - 8
+  );
+
+  const availableHeight = Math.max(
+    0,
+    clock.clientHeight - 8
+  );
+
+  // Card proportions
+  const cardRatio = 0.72;
+  const gapRatio = 0.08;
+  const separatorRatio = 0.22;
+
+  // Total width in units of card height
+  const totalRatio =
+    (4 * cardRatio) +
+    (4 * gapRatio) +
+    separatorRatio;
+
+  // Use whichever dimension is more restrictive
+  const cardHeight = Math.max(
+    0,
+    Math.min(
+      availableHeight,
+      availableWidth / totalRatio
+    )
+  );
+
+  const cardWidth = cardHeight * cardRatio;
+  const gap = cardHeight * gapRatio;
+  const separatorWidth = cardHeight * separatorRatio;
+
+  clock.style.gap = gap + "px";
+
+  digits.forEach(digit => {
+    digit.style.width = cardWidth + "px";
+    digit.style.height = cardHeight + "px";
+    digit.style.fontSize = (cardHeight * 0.76) + "px";
+    digit.style.borderRadius =
+      Math.max(3, cardHeight * 0.055) + "px";
+  });
+
+  separator.style.width = separatorWidth + "px";
+  separator.style.height = cardHeight + "px";
+  separator.style.fontSize = (cardHeight * 0.65) + "px";
+}
 
 function updateClock() {
   const now = new Date();
@@ -158,7 +233,18 @@ function updateClock() {
   });
 }
 
+// Automatically resize when Notion changes embed dimensions
+const resizeObserver = new ResizeObserver(resizeClock);
+resizeObserver.observe(document.body);
+resizeObserver.observe(clock);
+
+document.fonts.ready.then(resizeClock);
+
+window.addEventListener("resize", resizeClock);
+
+resizeClock();
 updateClock();
+
 setInterval(updateClock, 1000);
 </script>
 
