@@ -9,8 +9,8 @@
 
   <style>
     @font-face {
-      font-family: "Antone";
-      src: url("./fonts/Antone.ttf") format("truetype");
+      font-family: "Dream Orphans";
+      src: url("./fonts/Dream Orphans.otf") format("opentype");
       font-display: swap;
     }
 
@@ -34,7 +34,7 @@
     }
 
     body {
-      font-family: "Antone", Georgia, serif;
+      font-family: "Dream Orphans", Georgia, serif;
       color: var(--espresso);
       -webkit-font-smoothing: antialiased;
     }
@@ -365,7 +365,7 @@
       }
     }
 
-    function createIcon(type) {
+    function createIcon() {
       const svgNS = "http://www.w3.org/2000/svg";
 
       const svg = document.createElementNS(svgNS, "svg");
@@ -373,13 +373,10 @@
       svg.setAttribute("aria-hidden", "true");
 
       const path = document.createElementNS(svgNS, "path");
-
-      if (type === "delete") {
-        path.setAttribute(
-          "d",
-          "M5 5 L15 15 M15 5 L5 15"
-        );
-      }
+      path.setAttribute(
+        "d",
+        "M5 5 L15 15 M15 5 L5 15"
+      );
 
       svg.appendChild(path);
       return svg;
@@ -427,7 +424,7 @@
           "Delete " + task.text
         );
 
-        deleteButton.appendChild(createIcon("delete"));
+        deleteButton.appendChild(createIcon());
 
         deleteButton.addEventListener("click", () => {
           tasks = tasks.filter(item => item.id !== task.id);
