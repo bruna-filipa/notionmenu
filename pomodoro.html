@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Romantic Garden | Pomodoro</title>
 
   <style>
@@ -64,7 +63,7 @@
       justify-content: center;
       flex-wrap: wrap;
       gap: clamp(6px, 2.5cqw, 16px);
-      margin-bottom: clamp(12px, 4cqw, 24px);
+      margin-bottom: clamp(26px, 7cqw, 42px);
     }
 
     .mode-button {
@@ -86,7 +85,7 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      margin-bottom: clamp(12px, 4cqw, 24px);
+      margin-bottom: clamp(26px, 7cqw, 42px);
     }
 
     .timer,
@@ -679,7 +678,7 @@
       if (running) {
         startButton.textContent = "Pause";
       } else if (finished) {
-        startButton.textContent = "Restart";
+        startButton.textContent = "Reset";
       } else if (
         remainingSeconds < durations[currentMode]
       ) {
@@ -842,6 +841,8 @@
     startButton.addEventListener("click", () => {
       if (running) {
         pauseTimer();
+      } else if (finished) {
+        resetTimer();
       } else {
         startTimer();
       }
