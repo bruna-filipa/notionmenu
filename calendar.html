@@ -21,7 +21,7 @@
     --primary: #8D2B36;
     --secondary: #BE677C;
 
-    --row-height: 44px;
+    --row-height: 32px;
     --date-size: 12px;
     --today-circle: 22px;
   }
@@ -115,7 +115,7 @@
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .weekday {
@@ -185,7 +185,7 @@
 
   @media (max-width: 400px) {
     :root {
-      --row-height: 40px;
+      --row-height: 30px;
       --date-size: 11px;
       --today-circle: 21px;
     }
@@ -212,7 +212,7 @@
 
   @media (max-width: 250px) {
     :root {
-      --row-height: 34px;
+      --row-height: 27px;
       --date-size: 10px;
       --today-circle: 19px;
     }
@@ -333,6 +333,7 @@
     calendarDays.innerHTML = "";
     monthTitle.textContent = monthNames[currentMonth];
 
+    // Monday-first indexing
     const firstDay = (
       new Date(currentYear, currentMonth, 1).getDay() + 6
     ) % 7;
