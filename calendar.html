@@ -20,6 +20,10 @@
     --background: #F5DFE5;
     --primary: #8D2B36;
     --secondary: #BE677C;
+
+    --row-height: 44px;
+    --date-size: 12px;
+    --today-circle: 22px;
   }
 
   * {
@@ -63,11 +67,13 @@
   .month-title {
     margin: 0;
     text-align: center;
+
     font-family: "Antone", Arial, sans-serif;
     font-size: clamp(18px, 4vw, 28px);
     font-weight: 400;
     letter-spacing: 1px;
     line-height: 1.2;
+
     color: var(--primary);
     white-space: nowrap;
   }
@@ -76,11 +82,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
     width: 32px;
     height: 32px;
+
     background: transparent;
     border: none;
     padding: 5px;
+
     color: var(--primary);
     cursor: pointer;
   }
@@ -88,6 +97,7 @@
   .arrow svg {
     width: 17px;
     height: 17px;
+
     stroke: currentColor;
     stroke-width: 1.7;
     fill: none;
@@ -105,38 +115,42 @@
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
 
   .weekday {
     text-align: center;
+
     font-family: "Antone", Arial, sans-serif;
     font-size: 13px;
     font-weight: 400;
     line-height: 1.2;
+
     color: var(--secondary);
   }
 
-  /* COMPACT DATE GRID */
+  /* DATE GRID */
 
   .days {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    grid-auto-rows: 24px;
+    grid-auto-rows: var(--row-height);
     width: 100%;
     row-gap: 0;
   }
 
   .day {
     position: relative;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     width: 100%;
-    height: 24px;
+    height: var(--row-height);
 
     font-family: "Antone", Arial, sans-serif;
-    font-size: 12px;
+    font-size: var(--date-size);
     font-weight: 400;
     line-height: 1;
 
@@ -159,8 +173,10 @@
     content: "";
     position: absolute;
     z-index: -1;
-    width: 22px;
-    height: 22px;
+
+    width: var(--today-circle);
+    height: var(--today-circle);
+
     border-radius: 50%;
     background: var(--secondary);
   }
@@ -168,6 +184,12 @@
   /* SMALL NOTION EMBEDS */
 
   @media (max-width: 400px) {
+    :root {
+      --row-height: 40px;
+      --date-size: 11px;
+      --today-circle: 21px;
+    }
+
     .calendar {
       padding: 12px 10px 14px;
     }
@@ -184,28 +206,17 @@
     .weekday {
       font-size: 11px;
     }
-
-    .day {
-      font-size: 11px;
-    }
-
-    .days {
-      grid-auto-rows: 23px;
-    }
-
-    .day {
-      height: 23px;
-    }
-
-    .day.today::before {
-      width: 21px;
-      height: 21px;
-    }
   }
 
   /* VERY NARROW EMBEDS */
 
   @media (max-width: 250px) {
+    :root {
+      --row-height: 34px;
+      --date-size: 10px;
+      --today-circle: 19px;
+    }
+
     .calendar {
       padding: 10px 6px;
     }
@@ -233,20 +244,6 @@
 
     .weekday {
       font-size: 10px;
-    }
-
-    .day {
-      font-size: 10px;
-      height: 21px;
-    }
-
-    .days {
-      grid-auto-rows: 21px;
-    }
-
-    .day.today::before {
-      width: 19px;
-      height: 19px;
     }
   }
 </style>
@@ -336,7 +333,6 @@
     calendarDays.innerHTML = "";
     monthTitle.textContent = monthNames[currentMonth];
 
-    // Monday-first indexing
     const firstDay = (
       new Date(currentYear, currentMonth, 1).getDay() + 6
     ) % 7;
