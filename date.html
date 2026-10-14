@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Romantic Garden | Date</title>
+<style>
+@font-face{font-family:'Dream Orphans';src:url('./fonts/Dream%20Orphans.otf') format('opentype');font-display:swap}
+:root{--espresso:#402D19;--ivory:#FFF9F3;--petal:#F2DED1}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;background:transparent;overflow:hidden}
+body{display:grid;place-items:center}
+.date{display:flex;align-items:stretch;justify-content:center;gap:clamp(5px,1.4cqw,16px);width:100%;height:100%;padding:6px;container-type:inline-size}
+.tile{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--espresso);border-radius:clamp(5px,1.5cqw,12px);padding:6px 4px;overflow:hidden}
+.day{flex:1}.month{flex:2.1}.year{flex:1.45}
+.label{font:500 clamp(8px,1.9cqw,13px)/1.2 Arial,sans-serif;letter-spacing:.18em;color:var(--petal);margin-bottom:clamp(4px,1cqw,10px)}
+.value{font-family:'Dream Orphans',Georgia,serif;font-weight:400;line-height:1.15;color:var(--ivory);white-space:nowrap;text-align:center;font-size:clamp(18px,7cqw,100px)}
+.month .value{font-size:clamp(15px,5.4cqw,74px)}
+.year .value{font-size:clamp(16px,5.5cqw,78px)}
+@media(max-width:340px){.label{letter-spacing:.07em}}
+</style>
+</head>
+<body>
+<div class="date" aria-label="Today's date">
+  <div class="tile day"><div class="label">DAY</div><div class="value" id="day">14</div></div>
+  <div class="tile month"><div class="label">MONTH</div><div class="value" id="month">OCTOBER</div></div>
+  <div class="tile year"><div class="label">YEAR</div><div class="value" id="year">2026</div></div>
+</div>
+<script>
+function updateDate(){const now=new Date();const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',day:'2-digit',month:'long',year:'numeric'}).formatToParts(now);const value=t=>parts.find(p=>p.type===t).value;document.getElementById('day').textContent=value('day');document.getElementById('month').textContent=value('month').toUpperCase();document.getElementById('year').textContent=value('year')}
+updateDate();setInterval(updateDate,60000);
+</script>
+</body>
+</html>
