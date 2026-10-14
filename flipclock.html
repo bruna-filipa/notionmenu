@@ -1,83 +1,166 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Romantic Garden Flip Clock</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Romantic Garden | Flip Clock</title>
+
 <style>
-@font-face{font-family:'Dream Orphans';src:url('./fonts/Dream%20Orphans.otf') format('opentype');font-display:swap}
-:root{--espresso:#402D19;--ivory:#FFF9F3}
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;background:transparent!important}
-body{min-height:110px;display:grid;place-items:center;padding:6px;overflow:hidden}
-.clock{display:flex;align-items:center;justify-content:center;gap:clamp(7px,2vw,15px)}
-.pair{display:flex;gap:clamp(3px,1vw,7px)}
-.digit{width:clamp(38px,10vw,73px);height:clamp(62px,16vw,102px);display:flex;align-items:center;justify-content:center;position:relative;background:var(--espresso);border-radius:7px;color:var(--ivory);font-family:'Dream Orphans',Georgia,serif;font-size:clamp(45px,12vw,80px);font-weight:400;line-height:1;font-variant-numeric:lining-nums tabular-nums;overflow:hidden;perspective:500px}
-.digit .number{position:absolute;left:50%;top:50%;display:block;width:max-content;line-height:1;text-align:center;transform:translate(-50%,-50%) translateY(var(--optical-offset,0px));transform-origin:center;white-space:nowrap}
-.digit .number.changing{animation:flip .5s ease-in-out}
-.separator{font-family:'Dream Orphans',Georgia,serif;font-size:clamp(32px,8vw,58px);color:var(--espresso);line-height:1}
-@keyframes flip{0%{transform:translate(-50%,-50%) translateY(var(--optical-offset,0px)) rotateX(0)}45%{transform:translate(-50%,-50%) translateY(var(--optical-offset,0px)) rotateX(-85deg)}55%{transform:translate(-50%,-50%) translateY(var(--optical-offset,0px)) rotateX(85deg)}100%{transform:translate(-50%,-50%) translateY(var(--optical-offset,0px)) rotateX(0)}}
-@media(max-width:420px){body{min-height:85px;padding:3px}.digit{width:clamp(34px,11vw,44px);height:clamp(53px,17vw,68px);font-size:clamp(40px,13vw,51px)}.clock{gap:7px}.pair{gap:3px}.separator{font-size:35px}}
-@media(prefers-reduced-motion:reduce){.digit .number.changing{animation:none}}
+@font-face {
+  font-family: "Dream Orphans";
+  src: url("./fonts/Dream%20Orphans.otf") format("opentype");
+  font-display: swap;
+}
+
+:root {
+  --espresso: #402D19;
+  --ivory: #FFF9F3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1vw, 12px);
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+}
+
+.digit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: clamp(30px, 13%, 150px);
+  aspect-ratio: 0.72;
+
+  background: var(--espresso);
+  color: var(--ivory);
+
+  border-radius: clamp(4px, 0.8vw, 10px);
+  overflow: hidden;
+
+  font-family: "Dream Orphans", Georgia, serif;
+  font-size: clamp(35px, 9vw, 170px);
+  font-weight: normal;
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+}
+
+.digit span {
+  display: block;
+  line-height: 1;
+  transform: translateY(-2%);
+}
+
+.separator {
+  color: var(--espresso);
+  font-family: "Dream Orphans", Georgia, serif;
+  font-size: clamp(35px, 8vw, 140px);
+  line-height: 1;
+  align-self: center;
+}
+
+.digit.flip span {
+  animation: flip 0.35s ease-in-out;
+}
+
+@keyframes flip {
+  0% {
+    transform: translateY(-2%) rotateX(0deg);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translateY(-2%) rotateX(-70deg);
+    opacity: 0.65;
+  }
+
+  100% {
+    transform: translateY(-2%) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .digit.flip span {
+    animation: none;
+  }
+}
 </style>
 </head>
+
 <body>
-<div class="clock" role="timer" aria-label="Current UK time, hours and minutes">
-  <div class="pair" id="hours"></div><span class="separator" aria-hidden="true">:</span><div class="pair" id="minutes"></div>
+
+<div class="clock" aria-label="Current UK time">
+  <div class="digit"><span id="h1">0</span></div>
+  <div class="digit"><span id="h2">0</span></div>
+
+  <div class="separator">:</div>
+
+  <div class="digit"><span id="m1">0</span></div>
+  <div class="digit"><span id="m2">0</span></div>
 </div>
+
 <script>
-const numbers=[];
-for(const id of ['hours','minutes']){
-  const parent=document.getElementById(id);
-  for(let i=0;i<2;i++){
-    const tile=document.createElement('div');tile.className='digit';
-    const number=document.createElement('span');number.className='number';number.textContent='0';
-    tile.append(number);parent.append(tile);numbers.push(number);
-  }
-}
-// Measure the actual ink bounds of the font and optically centre its numerals.
-// This accounts for Dream Orphans having different font metrics from Georgia.
-async function centreNumbers(){
-  try{await document.fonts.load('80px "Dream Orphans"')}catch(e){}
-  const sample=numbers[0];
-  if(!sample)return;
-  const style=getComputedStyle(sample);
-  const canvas=document.createElement('canvas');
-  const ctx=canvas.getContext('2d');
-  ctx.font=`${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-  ctx.textBaseline='alphabetic';
-  let top=0,bottom=0,count=0;
-  for(const digit of '0123456789'){
-    const m=ctx.measureText(digit);
-    if(m.actualBoundingBoxAscent||m.actualBoundingBoxDescent){
-      top+=m.actualBoundingBoxAscent;bottom+=m.actualBoundingBoxDescent;count++;
+const digitIds = ["h1", "h2", "m1", "m2"];
+
+function updateClock() {
+  const now = new Date();
+
+  const time = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).format(now);
+
+  const numbers = time.replace(/\D/g, "");
+
+  digitIds.forEach((id, index) => {
+    const element = document.getElementById(id);
+    const newNumber = numbers[index];
+
+    if (element.textContent !== newNumber) {
+      element.textContent = newNumber;
+
+      const card = element.parentElement;
+      card.classList.remove("flip");
+
+      void card.offsetWidth;
+
+      card.classList.add("flip");
     }
-  }
-  if(!count)return;
-  // CSS line box centres the baseline around the font's typographic centre.
-  // Compare measured ink centre to the typographic centre using font metrics.
-  const m=ctx.measureText('8');
-  if(m.fontBoundingBoxAscent===undefined)return;
-  const fontCentre=(m.fontBoundingBoxAscent-m.fontBoundingBoxDescent)/2;
-  const inkCentre=(top-bottom)/(2*count);
-  const offset=inkCentre-fontCentre;
-  document.querySelectorAll('.digit').forEach(tile=>tile.style.setProperty('--optical-offset',`${offset.toFixed(2)}px`));
-}
-document.fonts.ready.then(centreNumbers);
-window.addEventListener('resize',centreNumbers);
-let first=true;
-function tick(){
-  const time=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date()).replace(/\D/g,'').slice(0,4);
-  [...time].forEach((digit,i)=>{
-    const node=numbers[i];if(node.textContent===digit)return;
-    if(first||matchMedia('(prefers-reduced-motion: reduce)').matches){node.textContent=digit;return}
-    node.classList.remove('changing');void node.offsetWidth;node.classList.add('changing');
-    setTimeout(()=>{node.textContent=digit},250);
-    setTimeout(()=>node.classList.remove('changing'),520);
   });
-  first=false;
 }
-tick();setInterval(tick,1000);
+
+updateClock();
+setInterval(updateClock, 1000);
 </script>
+
 </body>
 </html>
