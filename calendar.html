@@ -114,7 +114,7 @@ body {
   color: var(--secondary);
 }
 
-/* DATE GRID */
+/* SMALLER DATE GRID */
 
 .days {
   display: grid;
@@ -128,12 +128,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+
   width: 100%;
-  aspect-ratio: 1.4 / 1;
+  aspect-ratio: 2 / 1;
+
   font-family: "Antone", Arial, sans-serif;
-  font-size: clamp(11px, 3.6cqw, 34px);
+  font-size: clamp(9px, 2.5cqw, 24px);
   font-weight: 400;
   line-height: 1;
+
   color: var(--primary);
   text-align: center;
   isolation: isolate;
@@ -153,8 +156,10 @@ body {
   content: "";
   position: absolute;
   z-index: -1;
-  height: 78%;
+
+  height: 85%;
   aspect-ratio: 1 / 1;
+
   border-radius: 50%;
   background: var(--secondary);
 }
@@ -176,11 +181,32 @@ body {
   }
 
   .day {
-    font-size: 3.7cqw;
+    font-size: 2.5cqw;
   }
 
   .header {
     margin-bottom: 3cqw;
+  }
+}
+
+/* VERY SMALL EMBEDS */
+
+@container (max-width: 250px) {
+  .month-title {
+    font-size: 5cqw;
+    letter-spacing: 0;
+  }
+
+  .weekday {
+    font-size: 3cqw;
+  }
+
+  .day {
+    font-size: 2.5cqw;
+  }
+
+  .header {
+    margin-bottom: 2cqw;
   }
 }
 </style>
@@ -264,10 +290,13 @@ const monthNames = [
 const monthTitle = document.getElementById("monthTitle");
 const calendarDays = document.getElementById("calendarDays");
 
+/* RENDER CALENDAR */
+
 function renderCalendar() {
   calendarDays.innerHTML = "";
   monthTitle.textContent = monthNames[currentMonth];
 
+  // Monday-first calendar
   const firstDay = (
     new Date(currentYear, currentMonth, 1).getDay() + 6
   ) % 7;
@@ -278,12 +307,14 @@ function renderCalendar() {
     0
   ).getDate();
 
+  // Empty spaces before the first day
   for (let i = 0; i < firstDay; i++) {
     const empty = document.createElement("div");
     empty.className = "day empty";
     calendarDays.appendChild(empty);
   }
 
+  // Create date numbers
   for (let day = 1; day <= daysInMonth; day++) {
     const dayElement = document.createElement("div");
     dayElement.className = "day";
@@ -303,6 +334,8 @@ function renderCalendar() {
   }
 }
 
+/* MONTH NAVIGATION */
+
 function changeMonth(direction) {
   currentMonth += direction;
 
@@ -319,7 +352,11 @@ function changeMonth(direction) {
   renderCalendar();
 }
 
+/* INITIALISE */
+
 renderCalendar();
+
+// Update today's highlight automatically
 setInterval(renderCalendar, 60000);
 </script>
 
