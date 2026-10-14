@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Romantic Calendar</title>
+<title>Romantic Pomodoro</title>
 
 <style>
 @font-face {
@@ -17,8 +17,8 @@
 
 :root {
   --background: #F5DFE5;
-  --primary: #8D2B36;
-  --secondary: #BE677C;
+  --active: #8D2B36;
+  --inactive: #BE677C;
 }
 
 * {
@@ -34,138 +34,142 @@ html, body {
 
 body {
   font-family: "Antone", Arial, sans-serif;
-  color: var(--primary);
+  color: var(--active);
 }
 
-.calendar {
+/* RESPONSIVE OUTER FRAME */
+
+.widget-frame {
   container-type: inline-size;
   width: 100%;
   max-width: 650px;
   margin: 0 auto;
-  padding: 14px 12px 18px;
   background: var(--background);
 }
 
-.header {
-  display: grid;
-  grid-template-columns: 28px minmax(0, 1fr) 28px;
+/* MAIN LAYOUT */
+
+.pomodoro {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: clamp(12px, 5cqw, 25px);
+  justify-content: center;
+
+  width: 100%;
+  padding:
+    clamp(18px, 7cqw, 42px)
+    clamp(10px, 5cqw, 28px);
+
+  gap: clamp(16px, 6cqw, 32px);
 }
 
-.month-title {
-  margin: 0;
-  text-align: center;
+/* TIMER MODES */
+
+.modes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: clamp(3px, 1cqw, 10px);
+}
+
+.mode {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: var(--inactive);
   font-family: "Antone", Arial, sans-serif;
-  font-size: clamp(16px, 5cqw, 28px);
+  font-size: clamp(8px, 2.6cqw, 17px);
   font-weight: 400;
-  letter-spacing: 0.5px;
-  line-height: 1.2;
+  letter-spacing: 0.2px;
+
+  white-space: nowrap;
+  text-align: center;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.mode.active,
+.mode:hover {
+  color: var(--active);
+}
+
+/* TIMER DISPLAY */
+
+.timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+
+  color: var(--active);
+  font-family: "Antone", Arial, sans-serif;
+  font-size: clamp(38px, 17cqw, 105px);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  text-align: center;
   white-space: nowrap;
 }
 
-.arrow {
+/* CONTROLS */
+
+.controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 4px;
+  gap: clamp(20px, 7cqw, 42px);
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
   border: none;
   background: transparent;
-  color: var(--primary);
+  color: var(--active);
   cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
-.arrow svg {
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.7;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
-}
-
-.arrow:hover {
+.control:hover {
   opacity: 0.65;
 }
 
-.weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  margin-bottom: clamp(6px, 2cqw, 12px);
+.control svg {
+  width: clamp(18px, 5cqw, 28px);
+  height: clamp(18px, 5cqw, 28px);
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.weekday {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(4px, 1.5cqw, 10px) 0;
-  color: var(--secondary);
-  font-size: clamp(10px, 2.5cqw, 14px);
-  line-height: 1.2;
-}
+/* VERY NARROW NOTION COLUMNS */
 
-.days {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  grid-auto-rows: clamp(26px, 7cqw, 42px);
-  width: 100%;
-}
-
-.day {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-width: 0;
-  font-size: clamp(10px, 2.3cqw, 13px);
-  line-height: 1;
-  isolation: isolate;
-}
-
-.day.empty {
-  visibility: hidden;
-}
-
-.day.today {
-  color: var(--background);
-}
-
-.day.today::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  width: clamp(20px, 5cqw, 26px);
-  height: clamp(20px, 5cqw, 26px);
-  border-radius: 50%;
-  background: var(--secondary);
-}
-
-@media (max-width: 300px) {
-  .calendar {
-    padding: 10px 7px 12px;
+@container (max-width: 260px) {
+  .pomodoro {
+    padding: 16px 8px;
+    gap: 16px;
   }
 
-  .header {
-    grid-template-columns: 22px minmax(0, 1fr) 22px;
-  }
-
-  .arrow {
-    width: 22px;
-    height: 22px;
-    padding: 2px;
-  }
-
-  .arrow svg {
-    width: 13px;
-    height: 13px;
-  }
-
-  .month-title {
+  .mode {
+    font-size: 8px;
     letter-spacing: 0;
+  }
+
+  .timer {
+    font-size: clamp(30px, 16cqw, 42px);
   }
 }
 </style>
@@ -173,113 +177,189 @@ body {
 
 <body>
 
-<main class="calendar">
+<div class="widget-frame">
 
-  <header class="header">
+  <main class="pomodoro">
 
-    <button class="arrow" type="button"
-      onclick="changeMonth(-1)"
-      aria-label="Previous month">
-      <svg viewBox="0 0 24 24">
-        <path d="M15 3 L6 12 L15 21"/>
-      </svg>
-    </button>
+    <nav class="modes" aria-label="Timer modes">
 
-    <h1 class="month-title" id="monthTitle"></h1>
+      <button
+        class="mode"
+        data-mode="short"
+        onclick="changeMode('short')">
+        SHORT BREAK
+      </button>
 
-    <button class="arrow" type="button"
-      onclick="changeMonth(1)"
-      aria-label="Next month">
-      <svg viewBox="0 0 24 24">
-        <path d="M9 3 L18 12 L9 21"/>
-      </svg>
-    </button>
+      <button
+        class="mode active"
+        data-mode="focus"
+        onclick="changeMode('focus')">
+        FOCUS
+      </button>
 
-  </header>
+      <button
+        class="mode"
+        data-mode="long"
+        onclick="changeMode('long')">
+        LONG BREAK
+      </button>
 
-  <div class="weekdays">
-    <div class="weekday">M</div>
-    <div class="weekday">T</div>
-    <div class="weekday">W</div>
-    <div class="weekday">T</div>
-    <div class="weekday">F</div>
-    <div class="weekday">S</div>
-    <div class="weekday">S</div>
-  </div>
+    </nav>
 
-  <div class="days" id="calendarDays"></div>
+    <div
+      class="timer"
+      id="timer"
+      role="timer"
+      aria-label="Time remaining">
+      15:00
+    </div>
 
-</main>
+    <div class="controls">
+
+      <button
+        class="control"
+        id="playPause"
+        onclick="toggleTimer()"
+        aria-label="Play timer"
+        title="Play / Pause">
+
+        <svg id="playIcon" viewBox="0 0 24 24">
+          <path d="M6 3 L20 12 L6 21 Z"/>
+        </svg>
+
+      </button>
+
+      <button
+        class="control"
+        onclick="resetTimer()"
+        aria-label="Reset timer"
+        title="Reset timer">
+
+        <svg viewBox="0 0 24 24">
+          <path d="M3 11a9 9 0 1 1 2.5 6.2"/>
+          <path d="M3 4v7h7"/>
+        </svg>
+
+      </button>
+
+    </div>
+
+  </main>
+
+</div>
 
 <script>
-const today = new Date();
+const durations = {
+  short: 5 * 60,
+  focus: 15 * 60,
+  long: 30 * 60
+};
 
-let currentMonth = today.getMonth();
-let currentYear = today.getFullYear();
+let currentMode = "focus";
+let remaining = durations.focus;
+let interval = null;
+let endTime = null;
 
-const monthNames = [
-  "JANUARY", "FEBRUARY", "MARCH",
-  "APRIL", "MAY", "JUNE",
-  "JULY", "AUGUST", "SEPTEMBER",
-  "OCTOBER", "NOVEMBER", "DECEMBER"
-];
+const timerDisplay = document.getElementById("timer");
+const playPauseButton = document.getElementById("playPause");
+const playIcon = document.getElementById("playIcon");
 
-const monthTitle = document.getElementById("monthTitle");
-const calendarDays = document.getElementById("calendarDays");
+const playSVG = `
+  <path d="M6 3 L20 12 L6 21 Z"/>
+`;
 
-function renderCalendar() {
-  calendarDays.innerHTML = "";
-  monthTitle.textContent = monthNames[currentMonth];
+const pauseSVG = `
+  <path d="M8 4v16 M16 4v16"/>
+`;
 
-  const firstDay =
-    (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
+function displayTime() {
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
 
-  const daysInMonth =
-    new Date(currentYear, currentMonth + 1, 0).getDate();
+  timerDisplay.textContent =
+    String(minutes).padStart(2, "0") + ":" +
+    String(seconds).padStart(2, "0");
+}
 
-  for (let i = 0; i < firstDay; i++) {
-    const empty = document.createElement("div");
-    empty.className = "day empty";
-    calendarDays.appendChild(empty);
+function updateIcon() {
+  const isRunning = interval !== null;
+
+  playIcon.innerHTML = isRunning ? pauseSVG : playSVG;
+
+  playPauseButton.setAttribute(
+    "aria-label",
+    isRunning ? "Pause timer" : "Play timer"
+  );
+}
+
+function stopTimer() {
+  if (interval !== null) {
+    clearInterval(interval);
+    interval = null;
   }
 
-  const now = new Date();
+  endTime = null;
+  updateIcon();
+}
 
-  for (let day = 1; day <= daysInMonth; day++) {
-    const element = document.createElement("div");
-    element.className = "day";
-    element.textContent = day;
+function changeMode(mode) {
+  stopTimer();
 
-    if (
-      day === now.getDate() &&
-      currentMonth === now.getMonth() &&
-      currentYear === now.getFullYear()
-    ) {
-      element.classList.add("today");
+  currentMode = mode;
+  remaining = durations[mode];
+
+  document.querySelectorAll(".mode").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.mode === mode
+    );
+  });
+
+  displayTime();
+}
+
+function toggleTimer() {
+  if (interval !== null) {
+    remaining = Math.max(
+      0,
+      Math.ceil((endTime - Date.now()) / 1000)
+    );
+
+    stopTimer();
+    displayTime();
+    return;
+  }
+
+  if (remaining === 0) {
+    remaining = durations[currentMode];
+  }
+
+  endTime = Date.now() + remaining * 1000;
+
+  interval = setInterval(() => {
+    remaining = Math.max(
+      0,
+      Math.ceil((endTime - Date.now()) / 1000)
+    );
+
+    displayTime();
+
+    if (remaining === 0) {
+      stopTimer();
     }
+  }, 250);
 
-    calendarDays.appendChild(element);
-  }
+  updateIcon();
 }
 
-function changeMonth(direction) {
-  currentMonth += direction;
-
-  if (currentMonth > 11) {
-    currentMonth = 0;
-    currentYear++;
-  }
-
-  if (currentMonth < 0) {
-    currentMonth = 11;
-    currentYear--;
-  }
-
-  renderCalendar();
+function resetTimer() {
+  stopTimer();
+  remaining = durations[currentMode];
+  displayTime();
 }
 
-renderCalendar();
-setInterval(renderCalendar, 60000);
+displayTime();
+updateIcon();
 </script>
 
 </body>
