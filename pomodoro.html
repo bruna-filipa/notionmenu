@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Romantic Calendar</title>
+<title>Romantic Pomodoro</title>
 
 <style>
   @font-face {
@@ -18,12 +18,11 @@
 
   :root {
     --background: #F5DFE5;
-    --primary: #8D2B36;
-    --secondary: #BE677C;
+    --active: #8D2B36;
+    --inactive: #BE677C;
 
-    --row-height: 44px;
-    --date-size: 12px;
-    --today-circle: 22px;
+    --padding-vertical: 48px;
+    --padding-horizontal: 32px;
   }
 
   * {
@@ -35,215 +34,173 @@
     margin: 0;
     padding: 0;
     width: 100%;
-    min-height: 100%;
+    height: 100%;
+    overflow: hidden;
     background: var(--background);
   }
 
   body {
     font-family: "Antone", Arial, sans-serif;
-    color: var(--primary);
+    color: var(--active);
   }
 
-  /* MAIN CALENDAR */
+  /* OUTER SPACING */
 
-  .calendar {
+  .widget-frame {
     width: 100%;
-    max-width: 650px;
-    margin: 0 auto;
-    padding: 14px 18px 18px;
+    height: 100%;
+
+    padding:
+      var(--padding-vertical)
+      var(--padding-horizontal);
+
     background: var(--background);
   }
 
-  /* MONTH HEADER */
+  /* POMODORO CONTAINER */
 
-  .header {
-    display: grid;
-    grid-template-columns: 32px minmax(0, 1fr) 32px;
-    align-items: center;
+  .pomodoro {
+    container-type: size;
+
     width: 100%;
-    margin-bottom: 18px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 5cqh 4cqw;
+    background: var(--background);
+    overflow: hidden;
   }
 
-  .month-title {
-    margin: 0;
-    text-align: center;
+  /* TIMER MODES */
 
+  .modes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+    gap: 1cqw;
+    flex-shrink: 0;
+  }
+
+  .mode {
+    flex: 1;
+    min-width: 0;
+
+    border: none;
+    background: transparent;
+    padding: 0;
+
+    color: var(--inactive);
     font-family: "Antone", Arial, sans-serif;
-    font-size: clamp(18px, 4vw, 28px);
+    font-size: clamp(9px, 2.6cqw, 30px);
     font-weight: 400;
-    letter-spacing: 1px;
-    line-height: 1.2;
+    letter-spacing: 0.15cqw;
 
-    color: var(--primary);
     white-space: nowrap;
+    text-align: center;
+    cursor: pointer;
+
+    transition: color 0.2s ease;
   }
 
-  .arrow {
+  .mode.active,
+  .mode:hover {
+    color: var(--active);
+  }
+
+  /* TIMER DISPLAY */
+
+  .timer {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
-    width: 32px;
-    height: 32px;
+    font-family: "Antone", Arial, sans-serif;
+    font-size: min(19cqw, 40cqh);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    line-height: 1;
 
+    color: var(--active);
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  /* CONTROLS */
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: clamp(15px, 6cqw, 65px);
+    flex-shrink: 0;
+  }
+
+  .control {
     background: transparent;
     border: none;
-    padding: 5px;
+    color: var(--active);
 
-    color: var(--primary);
+    padding: 0;
     cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: opacity 0.2s ease;
   }
 
-  .arrow svg {
-    width: 17px;
-    height: 17px;
-
-    stroke: currentColor;
-    stroke-width: 1.7;
-    fill: none;
-    stroke-linecap: square;
-    stroke-linejoin: miter;
-  }
-
-  .arrow:hover {
+  .control:hover {
     opacity: 0.65;
   }
 
-  /* WEEKDAY LABELS */
+  .control svg {
+    width: min(6cqw, 12cqh);
+    height: min(6cqw, 12cqh);
 
-  .weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    width: 100%;
-    margin-bottom: 12px;
+    min-width: 16px;
+    min-height: 16px;
+
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
   }
 
-  .weekday {
-    text-align: center;
-
-    font-family: "Antone", Arial, sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.2;
-
-    color: var(--secondary);
-  }
-
-  /* DATE GRID */
-
-  .days {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    grid-auto-rows: var(--row-height);
-    width: 100%;
-    row-gap: 0;
-  }
-
-  .day {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 100%;
-    height: var(--row-height);
-
-    font-family: "Antone", Arial, sans-serif;
-    font-size: var(--date-size);
-    font-weight: 400;
-    line-height: 1;
-
-    color: var(--primary);
-    text-align: center;
-    isolation: isolate;
-  }
-
-  .day.empty {
-    visibility: hidden;
-  }
-
-  /* TODAY HIGHLIGHT */
-
-  .day.today {
-    color: var(--background);
-  }
-
-  .day.today::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-
-    width: var(--today-circle);
-    height: var(--today-circle);
-
-    border-radius: 50%;
-    background: var(--secondary);
-  }
-
-  /* SMALL NOTION EMBEDS */
+  /* SMALL EMBEDS */
 
   @media (max-width: 400px) {
     :root {
-      --row-height: 40px;
-      --date-size: 11px;
-      --today-circle: 21px;
-    }
-
-    .calendar {
-      padding: 12px 10px 14px;
-    }
-
-    .header {
-      margin-bottom: 14px;
-    }
-
-    .month-title {
-      font-size: clamp(16px, 5vw, 22px);
-      letter-spacing: 0.5px;
-    }
-
-    .weekday {
-      font-size: 11px;
+      --padding-vertical: 32px;
+      --padding-horizontal: 18px;
     }
   }
 
-  /* VERY NARROW EMBEDS */
-
   @media (max-width: 250px) {
     :root {
-      --row-height: 34px;
-      --date-size: 10px;
-      --today-circle: 19px;
+      --padding-vertical: 20px;
+      --padding-horizontal: 10px;
     }
+  }
 
-    .calendar {
-      padding: 10px 6px;
-    }
+  /* SHORT EMBEDS */
 
-    .header {
-      grid-template-columns: 24px minmax(0, 1fr) 24px;
-      margin-bottom: 10px;
-    }
-
-    .arrow {
-      width: 24px;
-      height: 24px;
-      padding: 3px;
-    }
-
-    .arrow svg {
-      width: 13px;
-      height: 13px;
-    }
-
-    .month-title {
-      font-size: 15px;
-      letter-spacing: 0;
-    }
-
-    .weekday {
-      font-size: 10px;
+  @media (max-height: 230px) {
+    :root {
+      --padding-vertical: 14px;
     }
   }
 </style>
@@ -251,149 +208,209 @@
 
 <body>
 
-<div class="calendar">
+<div class="widget-frame">
 
-  <!-- MONTH NAVIGATION -->
+  <div class="pomodoro">
 
-  <div class="header">
+    <!-- TIMER MODES -->
 
-    <button
-      class="arrow"
-      onclick="changeMonth(-1)"
-      aria-label="Previous month">
+    <nav class="modes" aria-label="Timer modes">
 
-      <svg viewBox="0 0 24 24">
-        <path d="M15 3 L6 12 L15 21"/>
-      </svg>
+      <button
+        class="mode"
+        data-mode="short"
+        onclick="changeMode('short')">
+        SHORT BREAK
+      </button>
 
-    </button>
+      <button
+        class="mode active"
+        data-mode="focus"
+        onclick="changeMode('focus')">
+        FOCUS
+      </button>
 
-    <h1 class="month-title" id="monthTitle">
-      OCTOBER
-    </h1>
+      <button
+        class="mode"
+        data-mode="long"
+        onclick="changeMode('long')">
+        LONG BREAK
+      </button>
 
-    <button
-      class="arrow"
-      onclick="changeMonth(1)"
-      aria-label="Next month">
+    </nav>
 
-      <svg viewBox="0 0 24 24">
-        <path d="M9 3 L18 12 L9 21"/>
-      </svg>
+    <!-- TIMER -->
 
-    </button>
+    <div
+      class="timer"
+      id="timer"
+      role="timer"
+      aria-label="Time remaining">
+      15:00
+    </div>
+
+    <!-- CONTROLS -->
+
+    <div class="controls">
+
+      <button
+        class="control"
+        id="playPause"
+        onclick="toggleTimer()"
+        aria-label="Play timer"
+        title="Play / Pause">
+
+        <svg id="playIcon" viewBox="0 0 24 24">
+          <path d="M6 3 L20 12 L6 21 Z"/>
+        </svg>
+
+      </button>
+
+      <button
+        class="control"
+        onclick="resetTimer()"
+        aria-label="Reset timer"
+        title="Reset timer">
+
+        <svg viewBox="0 0 24 24">
+          <path d="M3 11a9 9 0 1 1 2.5 6.2"/>
+          <path d="M3 4v7h7"/>
+        </svg>
+
+      </button>
+
+    </div>
 
   </div>
-
-  <!-- MONDAY TO SUNDAY -->
-
-  <div class="weekdays">
-    <div class="weekday">M</div>
-    <div class="weekday">T</div>
-    <div class="weekday">W</div>
-    <div class="weekday">T</div>
-    <div class="weekday">F</div>
-    <div class="weekday">S</div>
-    <div class="weekday">S</div>
-  </div>
-
-  <!-- CALENDAR DATES -->
-
-  <div class="days" id="calendarDays"></div>
 
 </div>
 
 <script>
-  const today = new Date();
+  const durations = {
+    short: 5 * 60,
+    focus: 15 * 60,
+    long: 30 * 60
+  };
 
-  let currentMonth = today.getMonth();
-  let currentYear = today.getFullYear();
+  let currentMode = "focus";
+  let remaining = durations.focus;
+  let interval = null;
+  let endTime = null;
 
-  const monthNames = [
-    "JANUARY",
-    "FEBRUARY",
-    "MARCH",
-    "APRIL",
-    "MAY",
-    "JUNE",
-    "JULY",
-    "AUGUST",
-    "SEPTEMBER",
-    "OCTOBER",
-    "NOVEMBER",
-    "DECEMBER"
-  ];
+  const timerDisplay = document.getElementById("timer");
+  const playPauseButton = document.getElementById("playPause");
+  const playIcon = document.getElementById("playIcon");
 
-  const monthTitle = document.getElementById("monthTitle");
-  const calendarDays = document.getElementById("calendarDays");
+  const playSVG = `
+    <path d="M6 3 L20 12 L6 21 Z"/>
+  `;
 
-  /* RENDER CALENDAR */
+  const pauseSVG = `
+    <path d="M8 4v16 M16 4v16"/>
+  `;
 
-  function renderCalendar() {
-    calendarDays.innerHTML = "";
-    monthTitle.textContent = monthNames[currentMonth];
+  /* DISPLAY TIME */
 
-    const firstDay = (
-      new Date(currentYear, currentMonth, 1).getDay() + 6
-    ) % 7;
+  function displayTime() {
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
 
-    const daysInMonth = new Date(
-      currentYear,
-      currentMonth + 1,
-      0
-    ).getDate();
-
-    // Empty cells before the first date
-    for (let i = 0; i < firstDay; i++) {
-      const empty = document.createElement("div");
-      empty.className = "day empty";
-      calendarDays.appendChild(empty);
-    }
-
-    // Create dates
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dayElement = document.createElement("div");
-      dayElement.className = "day";
-      dayElement.textContent = day;
-
-      const actualToday = new Date();
-
-      if (
-        day === actualToday.getDate() &&
-        currentMonth === actualToday.getMonth() &&
-        currentYear === actualToday.getFullYear()
-      ) {
-        dayElement.classList.add("today");
-      }
-
-      calendarDays.appendChild(dayElement);
-    }
+    timerDisplay.textContent =
+      String(minutes).padStart(2, "0") + ":" +
+      String(seconds).padStart(2, "0");
   }
 
-  /* CHANGE MONTH */
+  /* UPDATE ICON */
 
-  function changeMonth(direction) {
-    currentMonth += direction;
+  function updateIcon() {
+    const isRunning = interval !== null;
 
-    if (currentMonth > 11) {
-      currentMonth = 0;
-      currentYear++;
+    playIcon.innerHTML = isRunning ? pauseSVG : playSVG;
+
+    playPauseButton.setAttribute(
+      "aria-label",
+      isRunning ? "Pause timer" : "Play timer"
+    );
+  }
+
+  /* STOP TIMER */
+
+  function stopTimer() {
+    if (interval !== null) {
+      clearInterval(interval);
+      interval = null;
     }
 
-    if (currentMonth < 0) {
-      currentMonth = 11;
-      currentYear--;
+    endTime = null;
+    updateIcon();
+  }
+
+  /* CHANGE MODE */
+
+  function changeMode(mode) {
+    stopTimer();
+
+    currentMode = mode;
+    remaining = durations[mode];
+
+    document.querySelectorAll(".mode").forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.mode === mode
+      );
+    });
+
+    displayTime();
+  }
+
+  /* PLAY / PAUSE / RESUME */
+
+  function toggleTimer() {
+    if (interval !== null) {
+      remaining = Math.max(
+        0,
+        Math.ceil((endTime - Date.now()) / 1000)
+      );
+
+      stopTimer();
+      displayTime();
+      return;
     }
 
-    renderCalendar();
+    if (remaining === 0) {
+      remaining = durations[currentMode];
+    }
+
+    endTime = Date.now() + remaining * 1000;
+
+    interval = setInterval(() => {
+      remaining = Math.max(
+        0,
+        Math.ceil((endTime - Date.now()) / 1000)
+      );
+
+      displayTime();
+
+      if (remaining === 0) {
+        stopTimer();
+      }
+    }, 250);
+
+    updateIcon();
+  }
+
+  /* RESET */
+
+  function resetTimer() {
+    stopTimer();
+    remaining = durations[currentMode];
+    displayTime();
   }
 
   /* INITIALISE */
 
-  renderCalendar();
-
-  // Refresh today's highlight automatically
-  setInterval(renderCalendar, 60000);
+  displayTime();
+  updateIcon();
 </script>
 
 </body>
