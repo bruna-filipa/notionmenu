@@ -2,251 +2,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Romantic Garden | Flip Clock</title>
+  <title>Romantic Garden | Vintage Clock</title>
 
-<style>
-@font-face {
-  font-family: "Dream Orphans";
-  src: url("./fonts/Dream%20Orphans.otf") format("opentype");
-  font-display: swap;
-}
+  <style>
+    :root {
+      --espresso: #402D19;
+      --ivory: #FFF9F3;
+    }
 
-:root {
-  --espresso: #402D19;
-  --ivory: #FFF9F3;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-* {
-  box-sizing: border-box;
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+    }
 
-html,
-body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background: transparent !important;
-}
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    .clock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(4px, 1.5vw, 12px);
+      width: 100%;
+      height: 100%;
+    }
 
-.clock {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  width: 100%;
-  height: 100%;
-  padding: 4px;
-}
+    .digit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-.digit {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+      flex: 1 1 0;
+      min-width: 0;
+      height: 90%;
 
-  background: var(--espresso);
-  color: var(--ivory);
+      background: var(--espresso);
+      color: var(--ivory);
 
-  border-radius: 6px;
-  overflow: hidden;
+      border-radius: 6px;
 
-  font-family: "Dream Orphans", Georgia, serif;
-  font-weight: normal;
-  font-variant-numeric: lining-nums;
-  line-height: 1;
+      font-family: Georgia, serif;
+      font-size: clamp(28px, 10cqw, 100px);
+      font-weight: 400;
+      line-height: 1;
 
-  perspective: 600px;
-}
+      font-variant-numeric: tabular-nums;
+    }
 
-.digit span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    .separator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-  width: 100%;
-  height: 100%;
+      color: var(--espresso);
 
-  line-height: 1;
-  transform: translateY(-2%);
-  transform-origin: center;
-}
+      font-family: Georgia, serif;
+      font-size: clamp(24px, 7cqw, 75px);
+      line-height: 1;
+    }
 
-.separator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+    .clock-container {
+      width: 100%;
+      height: 100%;
+      container-type: inline-size;
+    }
 
-  color: var(--espresso);
-  font-family: "Dream Orphans", Georgia, serif;
-  line-height: 1;
-}
+    @media (max-width: 400px) {
+      .clock {
+        gap: 4px;
+      }
 
-.digit.flip span {
-  animation: flip 0.35s ease-in-out;
-}
-
-@keyframes flip {
-  0% {
-    transform: translateY(-2%) rotateX(0deg);
-    opacity: 1;
-  }
-
-  50% {
-    transform: translateY(-2%) rotateX(-70deg);
-    opacity: 0.65;
-  }
-
-  100% {
-    transform: translateY(-2%) rotateX(0deg);
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .digit.flip span {
-    animation: none;
-  }
-}
-</style>
+      .digit {
+        border-radius: 4px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="clock" aria-label="Current UK time">
+  <div class="clock-container">
+    <div class="clock">
 
-  <div class="digit">
-    <span id="h1">0</span>
+      <div class="digit" id="h1">0</div>
+      <div class="digit" id="h2">0</div>
+
+      <div class="separator">:</div>
+
+      <div class="digit" id="m1">0</div>
+      <div class="digit" id="m2">0</div>
+
+    </div>
   </div>
 
-  <div class="digit">
-    <span id="h2">0</span>
-  </div>
+  <script>
+    function updateClock() {
+      const now = new Date();
 
-  <div class="separator">:</div>
+      const londonTime = new Intl.DateTimeFormat(
+        "en-GB",
+        {
+          timeZone: "Europe/London",
+          hour: "2-digit",
+          minute: "2-digit",
+          hourCycle: "h23"
+        }
+      ).format(now);
 
-  <div class="digit">
-    <span id="m1">0</span>
-  </div>
+      const [hours, minutes] = londonTime.split(":");
 
-  <div class="digit">
-    <span id="m2">0</span>
-  </div>
+      document.getElementById("h1").textContent = hours[0];
+      document.getElementById("h2").textContent = hours[1];
 
-</div>
-
-<script>
-const digitIds = ["h1", "h2", "m1", "m2"];
-
-const clock = document.querySelector(".clock");
-const digits = document.querySelectorAll(".digit");
-const separator = document.querySelector(".separator");
-
-function resizeClock() {
-  const availableWidth = Math.max(
-    0,
-    clock.clientWidth - 8
-  );
-
-  const availableHeight = Math.max(
-    0,
-    clock.clientHeight - 8
-  );
-
-  // Card proportions
-  const cardRatio = 0.72;
-  const gapRatio = 0.08;
-  const separatorRatio = 0.22;
-
-  // Total width in units of card height
-  const totalRatio =
-    (4 * cardRatio) +
-    (4 * gapRatio) +
-    separatorRatio;
-
-  // Use whichever dimension is more restrictive
-  const cardHeight = Math.max(
-    0,
-    Math.min(
-      availableHeight,
-      availableWidth / totalRatio
-    )
-  );
-
-  const cardWidth = cardHeight * cardRatio;
-  const gap = cardHeight * gapRatio;
-  const separatorWidth = cardHeight * separatorRatio;
-
-  clock.style.gap = gap + "px";
-
-  digits.forEach(digit => {
-    digit.style.width = cardWidth + "px";
-    digit.style.height = cardHeight + "px";
-    digit.style.fontSize = (cardHeight * 0.76) + "px";
-    digit.style.borderRadius =
-      Math.max(3, cardHeight * 0.055) + "px";
-  });
-
-  separator.style.width = separatorWidth + "px";
-  separator.style.height = cardHeight + "px";
-  separator.style.fontSize = (cardHeight * 0.65) + "px";
-}
-
-function updateClock() {
-  const now = new Date();
-
-  const time = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Europe/London",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23"
-  }).format(now);
-
-  const numbers = time.replace(/\D/g, "");
-
-  digitIds.forEach((id, index) => {
-    const element = document.getElementById(id);
-    const newNumber = numbers[index];
-
-    if (element.textContent !== newNumber) {
-      element.textContent = newNumber;
-
-      const card = element.parentElement;
-      card.classList.remove("flip");
-
-      void card.offsetWidth;
-
-      card.classList.add("flip");
+      document.getElementById("m1").textContent = minutes[0];
+      document.getElementById("m2").textContent = minutes[1];
     }
-  });
-}
 
-// Automatically resize when Notion changes embed dimensions
-const resizeObserver = new ResizeObserver(resizeClock);
-resizeObserver.observe(document.body);
-resizeObserver.observe(clock);
-
-document.fonts.ready.then(resizeClock);
-
-window.addEventListener("resize", resizeClock);
-
-resizeClock();
-updateClock();
-
-setInterval(updateClock, 1000);
-</script>
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
 
 </body>
 </html>
