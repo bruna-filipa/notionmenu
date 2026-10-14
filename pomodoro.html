@@ -10,8 +10,7 @@
 <style>
   @font-face {
     font-family: "Antone";
-    src: url("./fonts/Antone.ttf")
-         format("truetype");
+    src: url("./fonts/Antone.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -28,10 +27,11 @@
   }
 
   html, body {
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
-    width: 100%;
-    min-height: 100%;
+    overflow: hidden;
     background: var(--background);
   }
 
@@ -40,42 +40,53 @@
     color: var(--active);
   }
 
+  /* RESPONSIVE CONTAINER */
+
   .pomodoro {
+    container-type: size;
+
     width: 100%;
-    min-height: 350px;
-    padding: 30px 24px 35px;
-    background: var(--background);
+    height: 100%;
 
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+
+    padding: 5cqh 4cqw;
+    background: var(--background);
+    overflow: hidden;
   }
 
-  /* TIMER MODES */
+  /* MODE NAVIGATION */
 
   .modes {
-    width: 100%;
-    max-width: 850px;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
+
+    width: 100%;
+    gap: 1cqw;
+    flex-shrink: 0;
   }
 
   .mode {
+    flex: 1;
+    min-width: 0;
+
     border: none;
     background: transparent;
+    padding: 0;
 
     color: var(--inactive);
     font-family: "Antone", Arial, sans-serif;
-    font-size: clamp(12px, 2.5vw, 26px);
+    font-size: clamp(9px, 2.6cqw, 30px);
     font-weight: 400;
-    letter-spacing: 3px;
+    letter-spacing: 0.15cqw;
 
-    cursor: pointer;
-    padding: 10px 0;
     white-space: nowrap;
+    text-align: center;
+    cursor: pointer;
 
     transition: color 0.2s ease;
   }
@@ -88,28 +99,35 @@
   /* TIMER DISPLAY */
 
   .timer {
-    margin-top: 55px;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     font-family: "Antone", Arial, sans-serif;
-    font-size: clamp(85px, 18vw, 165px);
+    font-size: min(19cqw, 40cqh);
     font-weight: 400;
     font-variant-numeric: tabular-nums;
-    letter-spacing: 1px;
-    line-height: 1.15;
+    letter-spacing: 0;
 
+    line-height: 1;
     color: var(--active);
+    white-space: nowrap;
     text-align: center;
   }
 
-  /* CONTROLS */
+  /* PLAY / PAUSE / RESET */
 
   .controls {
     display: flex;
     justify-content: center;
     align-items: center;
 
-    gap: 55px;
-    margin-top: 45px;
+    gap: clamp(15px, 6cqw, 65px);
+    flex-shrink: 0;
   }
 
   .control {
@@ -117,7 +135,7 @@
     border: none;
     color: var(--active);
 
-    padding: 8px;
+    padding: 0;
     cursor: pointer;
 
     display: flex;
@@ -132,8 +150,11 @@
   }
 
   .control svg {
-    width: 35px;
-    height: 35px;
+    width: min(6cqw, 12cqh);
+    height: min(6cqw, 12cqh);
+
+    min-width: 16px;
+    min-height: 16px;
 
     stroke: currentColor;
     stroke-width: 1.7;
@@ -142,27 +163,9 @@
     fill: none;
   }
 
-  /* RESPONSIVE */
-
-  @media (max-width: 480px) {
-    .pomodoro {
-      min-height: 280px;
-      padding: 20px 12px 25px;
-    }
-
+  @container (max-width: 350px) {
     .mode {
-      font-size: clamp(10px, 2.8vw, 14px);
-      letter-spacing: 1px;
-    }
-
-    .timer {
-      margin-top: 48px;
-      font-size: clamp(72px, 18vw, 110px);
-    }
-
-    .controls {
-      margin-top: 35px;
-      gap: 40px;
+      letter-spacing: 0;
     }
   }
 </style>
@@ -209,7 +212,7 @@
     15:00
   </div>
 
-  <!-- BUTTONS -->
+  <!-- CONTROLS -->
 
   <div class="controls">
 
@@ -341,12 +344,12 @@
       return;
     }
 
-    // Restart only when countdown has finished
+    // Restart if countdown has finished
     if (remaining === 0) {
       remaining = durations[currentMode];
     }
 
-    // Play or resume from remaining time
+    // Play or resume
     endTime = Date.now() + remaining * 1000;
 
     interval = setInterval(() => {
