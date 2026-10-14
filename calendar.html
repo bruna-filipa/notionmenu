@@ -5,7 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Romantic Garden Calendar</title>
+
 <style>
+  @font-face {
+    font-family: "Dream Orphans";
+    src: url("./fonts/DreamOrphans.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
   * {
     box-sizing: border-box;
   }
@@ -13,16 +23,16 @@
   html, body {
     margin: 0;
     padding: 0;
-    background: transparent;
-    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    background: #FFFFFF;
+    font-family: "Dream Orphans", Georgia, serif;
   }
 
   .calendar {
     width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-    background: #FFF9F3;
-    border: 1px solid #F2DED1;
+    margin: 0;
+    padding: 0;
+    background: #FFFFFF;
     overflow: hidden;
   }
 
@@ -32,13 +42,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 13px 12px;
+    padding: 12px 14px;
     gap: 8px;
   }
 
   .month-title {
-    font-family: Georgia, serif;
-    font-size: 17px;
+    font-family: "Dream Orphans", Georgia, serif;
+    font-size: 21px;
     font-weight: normal;
     text-align: center;
     flex: 1;
@@ -46,12 +56,14 @@
   }
 
   .nav-button {
-    background: none;
+    background: transparent;
     border: none;
     color: #FFF9F3;
-    font-size: 20px;
+    font-family: Georgia, serif;
+    font-size: 23px;
     cursor: pointer;
-    padding: 0 6px;
+    padding: 0 8px;
+    line-height: 1;
   }
 
   .nav-button:hover {
@@ -59,7 +71,8 @@
   }
 
   .calendar-body {
-    padding: 10px 12px 14px;
+    padding: 10px 12px 12px;
+    background: #FFFFFF;
   }
 
   .calendar-grid {
@@ -71,17 +84,18 @@
 
   .weekday {
     color: #402D19;
-    font-size: 11px;
-    font-weight: bold;
+    font-family: "Dream Orphans", Georgia, serif;
+    font-size: 14px;
     padding: 8px 0 12px;
   }
 
   .day {
-    height: 32px;
+    height: 34px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
+    font-family: "Dream Orphans", Georgia, serif;
+    font-size: 15px;
     color: #402D19;
   }
 
@@ -97,17 +111,25 @@
   }
 
   @media (max-width: 320px) {
+    .calendar-header {
+      padding: 10px 8px;
+    }
+
     .calendar-body {
       padding: 7px;
     }
 
     .day {
-      height: 28px;
-      font-size: 11px;
+      height: 29px;
+      font-size: 13px;
+    }
+
+    .weekday {
+      font-size: 12px;
     }
 
     .month-title {
-      font-size: 15px;
+      font-size: 18px;
     }
   }
 </style>
@@ -116,19 +138,24 @@
 <body>
 
 <div class="calendar">
+
   <div class="calendar-header">
     <button class="nav-button" id="prev" aria-label="Previous month">‹</button>
+
     <span class="month-title" id="monthTitle"></span>
+
     <button class="nav-button" id="next" aria-label="Next month">›</button>
   </div>
 
   <div class="calendar-body">
     <div class="calendar-grid" id="calendarGrid"></div>
   </div>
+
 </div>
 
 <script>
   const today = new Date();
+
   let currentMonth = today.getMonth();
   let currentYear = today.getFullYear();
 
@@ -156,7 +183,12 @@
       grid.appendChild(el);
     });
 
-    const firstDay = new Date(currentYear, currentMonth, 1);
+    const firstDay = new Date(
+      currentYear,
+      currentMonth,
+      1
+    );
+
     const offset = (firstDay.getDay() + 6) % 7;
 
     const daysInMonth = new Date(
