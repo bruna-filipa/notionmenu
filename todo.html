@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Little To-Do List</title>
+<style>
+@font-face{font-family:'Dream Orphans';src:url('./Dream Orphans.otf') format('opentype');font-display:swap}
+:root{--espresso:#402D19;--rose:#B87C72;--blush:#D9A89A;--petal:#F2DED1;--ivory:#FFF9F3}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:transparent!important;color:var(--espresso);font-family:Arial,Helvetica,sans-serif}
+body{min-height:0}
+.widget{width:100%;margin:0;padding:0;background:transparent}
+.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+h1{font-family:'Dream Orphans',Georgia,serif;font-weight:400;font-size:clamp(27px,4.2vw,38px);line-height:1.12;margin:0;color:var(--espresso)}
+.count{font-size:12px;color:var(--rose);white-space:nowrap}
+.rule{height:1px;background:var(--petal);margin-bottom:7px}
+.tasks{list-style:none;margin:0;padding:0}
+.task{display:flex;align-items:center;gap:10px;padding:10px 1px;border-bottom:1px solid var(--petal)}
+.check{appearance:none;-webkit-appearance:none;flex:none;width:19px;height:19px;border:1.5px solid var(--rose);border-radius:4px;background:transparent;cursor:pointer;display:grid;place-items:center;margin:0}
+.check:checked{background:var(--rose)}
+.check:checked::after{content:'✓';color:white;font-size:14px;line-height:1}
+.task-label{flex:1;min-width:0;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.task.done .task-label{text-decoration:line-through;color:var(--rose);opacity:.75}
+.icon-btn{border:0;background:transparent;color:var(--rose);padding:4px;cursor:pointer;display:grid;place-items:center;border-radius:4px}
+.icon-btn:hover,.icon-btn:focus-visible{background:var(--petal)}
+.icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.add-form{display:flex;align-items:center;gap:8px;margin-top:12px}
+.add-input{flex:1;min-width:0;background:transparent;border:1px solid var(--petal);border-radius:5px;padding:11px 12px;color:var(--espresso);font:inherit;font-size:14px;outline:none}
+.add-input::placeholder{color:var(--rose);opacity:.85}
+.add-input:focus{border-color:var(--rose)}
+.add-button{background:var(--espresso);color:var(--ivory);border:0;border-radius:5px;padding:11px 15px;font-size:14px;cursor:pointer;white-space:nowrap}
+.add-button:hover{background:var(--rose)}
+.footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;min-height:22px}
+.footer-note{color:var(--rose);font-size:11px}
+.clear{border:0;background:transparent;color:var(--rose);font-size:11px;cursor:pointer;padding:4px 0}
+.clear:hover{text-decoration:underline}
+.empty{padding:14px 2px;color:var(--rose);font-size:13px}
+.edit-input{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--espresso);background:transparent;border:0;border-bottom:1px solid var(--rose);outline:none;padding:4px 0}
+@media(max-width:420px){h1{font-size:29px}.count{font-size:11px}.add-button{padding:11px 12px}}
+</style>
+</head>
+<body>
+<main class="widget" aria-label="To-do list">
+ <div class="heading"><h1>The Little To-Do List</h1><span class="count" id="count">0 of 0 done</span></div>
+ <div class="rule"></div>
+ <ul class="tasks" id="tasks"></ul>
+ <form class="add-form" id="add-form"><input class="add-input" id="new-task" type="text" placeholder="Write a little something..." aria-label="New task" maxlength="500" autocomplete="off" required /><button class="add-button" type="submit">+ Add</button></form>
+ <div class="footer"><span class="footer-note">One little thing at a time ♡</span><button class="clear" id="clear" type="button">Clear completed</button></div>
+</main>
+<script>
+(()=>{
+ 'use strict';
+ const KEY='romantic-garden-todo-v1';
+ const list=document.getElementById('tasks'),count=document.getElementById('count'),form=document.getElementById('add-form'),input=document.getElementById('new-task'),clear=document.getElementById('clear');
+ let tasks=[];
+ try{const saved=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(saved))tasks=saved.filter(x=>x&&typeof x.id==='string'&&typeof x.text==='string').map(x=>({id:x.id,text:x.text,done:!!x.done}));}catch(e){console.warn('Could not load saved tasks',e)}
+ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(tasks))}catch(e){console.warn('Could not save tasks',e)}};
+ const trashIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 10v7M14 10v7"/></svg>';
+ const editIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16 4l4 4-11 11-5 1 1-5L16 4z"/></svg>';
+ function render(){
+  list.replaceChildren();
+  for(const task of tasks){
+   const li=document.createElement('li');li.className='task'+(task.done?' done':'');
+   const check=document.createElement('input');check.type='checkbox';check.className='check';check.checked=task.done;check.setAttribute('aria-label','Complete '+task.text);check.addEventListener('change',()=>{task.done=check.checked;save();render()});
+   const label=document.createElement('span');label.className='task-label';label.textContent=task.text;
+   const edit=document.createElement('button');edit.type='button';edit.className='icon-btn';edit.title='Edit task';edit.setAttribute('aria-label','Edit '+task.text);edit.innerHTML=editIcon;edit.addEventListener('click',()=>{
+    const field=document.createElement('input');field.className='edit-input';field.value=task.text;field.maxLength=500;field.setAttribute('aria-label','Edit task');label.replaceWith(field);field.focus();field.select();let finished=false;
+    const finish=(commit)=>{if(finished)return;finished=true;const value=field.value.trim();if(commit&&value){task.text=value;save()}render()};
+    field.addEventListener('keydown',e=>{if(e.key==='Enter')finish(true);if(e.key==='Escape')finish(false)});field.addEventListener('blur',()=>finish(true));
+   });
+   const del=document.createElement('button');del.type='button';del.className='icon-btn';del.title='Delete task';del.setAttribute('aria-label','Delete '+task.text);del.innerHTML=trashIcon;del.addEventListener('click',()=>{tasks=tasks.filter(t=>t.id!==task.id);save();render()});
+   li.append(check,label,edit,del);list.append(li);
+  }
+  if(!tasks.length){const empty=document.createElement('li');empty.className='empty';empty.textContent='Nothing on your list yet ♡';list.append(empty)}
+  const completed=tasks.filter(t=>t.done).length;count.textContent=`${completed} of ${tasks.length} done`;clear.hidden=completed===0;
+ }
+ form.addEventListener('submit',e=>{e.preventDefault();const value=input.value.trim();if(!value)return;tasks.push({id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),text:value,done:false});input.value='';save();render();input.focus()});
+ clear.addEventListener('click',()=>{tasks=tasks.filter(t=>!t.done);save();render()});
+ window.addEventListener('storage',e=>{if(e.key===KEY){try{const incoming=JSON.parse(e.newValue||'[]');if(Array.isArray(incoming)){tasks=incoming;render()}}catch(_){}}});
+ render();
+})();
+</script>
+</body>
+</html>
