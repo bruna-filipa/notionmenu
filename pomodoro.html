@@ -4,205 +4,216 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Romantic Pomodoro</title>
 
 <style>
-  @font-face {
-    font-family: "Antone";
-    src: url("./fonts/Antone.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
+@font-face {
+  font-family: "Antone";
+  src: url("./fonts/Antone.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
+:root {
+  --background: #F5DFE5;
+  --active: #8D2B36;
+  --inactive: #BE677C;
+
+  --vertical-padding: 60px;
+  --horizontal-padding: 32px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--active);
+  font-family: "Antone", Arial, sans-serif;
+}
+
+/* OUTER FRAME */
+
+.widget-frame {
+  width: 100%;
+  padding:
+    var(--vertical-padding)
+    var(--horizontal-padding);
+  background: var(--background);
+}
+
+/* POMODORO */
+
+.pomodoro {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 35px;
+}
+
+/* MODES */
+
+.modes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.mode {
+  flex: 1;
+  min-width: 0;
+
+  padding: 0;
+  border: none;
+  background: transparent;
+
+  color: var(--inactive);
+  font-family: "Antone", Arial, sans-serif;
+  font-size: clamp(9px, 2.6vw, 24px);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+
+  white-space: nowrap;
+  text-align: center;
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.mode.active,
+.mode:hover {
+  color: var(--active);
+}
+
+/* TIMER */
+
+.timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  color: var(--active);
+  font-family: "Antone", Arial, sans-serif;
+  font-size: clamp(48px, 18vw, 130px);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* CONTROLS */
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 35px;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--active);
+  cursor: pointer;
+
+  transition: opacity 0.2s ease;
+}
+
+.control:hover {
+  opacity: 0.65;
+}
+
+.control svg {
+  width: 26px;
+  height: 26px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* SMALL NOTION EMBEDS */
+
+@media (max-width: 400px) {
   :root {
-    --background: #F5DFE5;
-    --active: #8D2B36;
-    --inactive: #BE677C;
-
-    --padding-vertical: 48px;
-    --padding-horizontal: 32px;
+    --horizontal-padding: 18px;
   }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  html,
-  body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: var(--background);
-  }
-
-  body {
-    font-family: "Antone", Arial, sans-serif;
-    color: var(--active);
-  }
-
-  /* OUTER SPACING */
-
-  .widget-frame {
-    width: 100%;
-    height: 100%;
-
-    padding:
-      var(--padding-vertical)
-      var(--padding-horizontal);
-
-    background: var(--background);
-  }
-
-  /* POMODORO CONTAINER */
 
   .pomodoro {
-    container-type: size;
-
-    width: 100%;
-    height: 100%;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 5cqh 4cqw;
-    background: var(--background);
-    overflow: hidden;
-  }
-
-  /* TIMER MODES */
-
-  .modes {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    width: 100%;
-    gap: 1cqw;
-    flex-shrink: 0;
+    gap: 28px;
   }
 
   .mode {
-    flex: 1;
-    min-width: 0;
-
-    border: none;
-    background: transparent;
-    padding: 0;
-
-    color: var(--inactive);
-    font-family: "Antone", Arial, sans-serif;
-    font-size: clamp(9px, 2.6cqw, 30px);
-    font-weight: 400;
-    letter-spacing: 0.15cqw;
-
-    white-space: nowrap;
-    text-align: center;
-    cursor: pointer;
-
-    transition: color 0.2s ease;
+    font-size: clamp(8px, 2.6vw, 14px);
   }
-
-  .mode.active,
-  .mode:hover {
-    color: var(--active);
-  }
-
-  /* TIMER DISPLAY */
 
   .timer {
-    flex: 1;
-    min-height: 0;
-    width: 100%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-family: "Antone", Arial, sans-serif;
-    font-size: min(19cqw, 40cqh);
-    font-weight: 400;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0;
-    line-height: 1;
-
-    color: var(--active);
-    white-space: nowrap;
-    text-align: center;
-  }
-
-  /* CONTROLS */
-
-  .controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    gap: clamp(15px, 6cqw, 65px);
-    flex-shrink: 0;
-  }
-
-  .control {
-    background: transparent;
-    border: none;
-    color: var(--active);
-
-    padding: 0;
-    cursor: pointer;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    transition: opacity 0.2s ease;
-  }
-
-  .control:hover {
-    opacity: 0.65;
+    font-size: clamp(36px, 17vw, 75px);
   }
 
   .control svg {
-    width: min(6cqw, 12cqh);
-    height: min(6cqw, 12cqh);
+    width: 23px;
+    height: 23px;
+  }
+}
 
-    min-width: 16px;
-    min-height: 16px;
-
-    stroke: currentColor;
-    stroke-width: 1.7;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    fill: none;
+@media (max-width: 250px) {
+  :root {
+    --horizontal-padding: 10px;
   }
 
-  /* SMALL EMBEDS */
-
-  @media (max-width: 400px) {
-    :root {
-      --padding-vertical: 32px;
-      --padding-horizontal: 18px;
-    }
+  .pomodoro {
+    gap: 22px;
   }
 
-  @media (max-width: 250px) {
-    :root {
-      --padding-vertical: 20px;
-      --padding-horizontal: 10px;
-    }
+  .mode {
+    font-size: 8px;
+    letter-spacing: 0;
   }
 
-  /* SHORT EMBEDS */
-
-  @media (max-height: 230px) {
-    :root {
-      --padding-vertical: 14px;
-    }
+  .timer {
+    font-size: clamp(30px, 16vw, 45px);
   }
+
+  .controls {
+    gap: 25px;
+  }
+
+  .control svg {
+    width: 20px;
+    height: 20px;
+  }
+}
 </style>
 </head>
 
@@ -210,9 +221,7 @@
 
 <div class="widget-frame">
 
-  <div class="pomodoro">
-
-    <!-- TIMER MODES -->
+  <main class="pomodoro">
 
     <nav class="modes" aria-label="Timer modes">
 
@@ -239,8 +248,6 @@
 
     </nav>
 
-    <!-- TIMER -->
-
     <div
       class="timer"
       id="timer"
@@ -248,8 +255,6 @@
       aria-label="Time remaining">
       15:00
     </div>
-
-    <!-- CONTROLS -->
 
     <div class="controls">
 
@@ -281,136 +286,122 @@
 
     </div>
 
-  </div>
+  </main>
 
 </div>
 
 <script>
-  const durations = {
-    short: 5 * 60,
-    focus: 15 * 60,
-    long: 30 * 60
-  };
+const durations = {
+  short: 5 * 60,
+  focus: 15 * 60,
+  long: 30 * 60
+};
 
-  let currentMode = "focus";
-  let remaining = durations.focus;
-  let interval = null;
-  let endTime = null;
+let currentMode = "focus";
+let remaining = durations.focus;
+let interval = null;
+let endTime = null;
 
-  const timerDisplay = document.getElementById("timer");
-  const playPauseButton = document.getElementById("playPause");
-  const playIcon = document.getElementById("playIcon");
+const timerDisplay = document.getElementById("timer");
+const playPauseButton = document.getElementById("playPause");
+const playIcon = document.getElementById("playIcon");
 
-  const playSVG = `
-    <path d="M6 3 L20 12 L6 21 Z"/>
-  `;
+const playSVG = `
+  <path d="M6 3 L20 12 L6 21 Z"/>
+`;
 
-  const pauseSVG = `
-    <path d="M8 4v16 M16 4v16"/>
-  `;
+const pauseSVG = `
+  <path d="M8 4v16 M16 4v16"/>
+`;
 
-  /* DISPLAY TIME */
+function displayTime() {
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
 
-  function displayTime() {
-    const minutes = Math.floor(remaining / 60);
-    const seconds = remaining % 60;
+  timerDisplay.textContent =
+    String(minutes).padStart(2, "0") + ":" +
+    String(seconds).padStart(2, "0");
+}
 
-    timerDisplay.textContent =
-      String(minutes).padStart(2, "0") + ":" +
-      String(seconds).padStart(2, "0");
+function updateIcon() {
+  const isRunning = interval !== null;
+
+  playIcon.innerHTML = isRunning ? pauseSVG : playSVG;
+
+  playPauseButton.setAttribute(
+    "aria-label",
+    isRunning ? "Pause timer" : "Play timer"
+  );
+}
+
+function stopTimer() {
+  if (interval !== null) {
+    clearInterval(interval);
+    interval = null;
   }
 
-  /* UPDATE ICON */
+  endTime = null;
+  updateIcon();
+}
 
-  function updateIcon() {
-    const isRunning = interval !== null;
+function changeMode(mode) {
+  stopTimer();
 
-    playIcon.innerHTML = isRunning ? pauseSVG : playSVG;
+  currentMode = mode;
+  remaining = durations[mode];
 
-    playPauseButton.setAttribute(
-      "aria-label",
-      isRunning ? "Pause timer" : "Play timer"
+  document.querySelectorAll(".mode").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.mode === mode
     );
-  }
-
-  /* STOP TIMER */
-
-  function stopTimer() {
-    if (interval !== null) {
-      clearInterval(interval);
-      interval = null;
-    }
-
-    endTime = null;
-    updateIcon();
-  }
-
-  /* CHANGE MODE */
-
-  function changeMode(mode) {
-    stopTimer();
-
-    currentMode = mode;
-    remaining = durations[mode];
-
-    document.querySelectorAll(".mode").forEach(button => {
-      button.classList.toggle(
-        "active",
-        button.dataset.mode === mode
-      );
-    });
-
-    displayTime();
-  }
-
-  /* PLAY / PAUSE / RESUME */
-
-  function toggleTimer() {
-    if (interval !== null) {
-      remaining = Math.max(
-        0,
-        Math.ceil((endTime - Date.now()) / 1000)
-      );
-
-      stopTimer();
-      displayTime();
-      return;
-    }
-
-    if (remaining === 0) {
-      remaining = durations[currentMode];
-    }
-
-    endTime = Date.now() + remaining * 1000;
-
-    interval = setInterval(() => {
-      remaining = Math.max(
-        0,
-        Math.ceil((endTime - Date.now()) / 1000)
-      );
-
-      displayTime();
-
-      if (remaining === 0) {
-        stopTimer();
-      }
-    }, 250);
-
-    updateIcon();
-  }
-
-  /* RESET */
-
-  function resetTimer() {
-    stopTimer();
-    remaining = durations[currentMode];
-    displayTime();
-  }
-
-  /* INITIALISE */
+  });
 
   displayTime();
+}
+
+function toggleTimer() {
+  if (interval !== null) {
+    remaining = Math.max(
+      0,
+      Math.ceil((endTime - Date.now()) / 1000)
+    );
+
+    stopTimer();
+    displayTime();
+    return;
+  }
+
+  if (remaining === 0) {
+    remaining = durations[currentMode];
+  }
+
+  endTime = Date.now() + remaining * 1000;
+
+  interval = setInterval(() => {
+    remaining = Math.max(
+      0,
+      Math.ceil((endTime - Date.now()) / 1000)
+    );
+
+    displayTime();
+
+    if (remaining === 0) {
+      stopTimer();
+    }
+  }, 250);
+
   updateIcon();
+}
+
+function resetTimer() {
+  stopTimer();
+  remaining = durations[currentMode];
+  displayTime();
+}
+
+displayTime();
+updateIcon();
 </script>
 
 </body>
