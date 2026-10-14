@@ -1,85 +1,502 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The Little To-Do List</title>
-<style>
-@font-face{font-family:'Dream Orphans';src:url('./Dream Orphans.otf') format('opentype');font-display:swap}
-:root{--espresso:#402D19;--rose:#B87C72;--blush:#D9A89A;--petal:#F2DED1;--ivory:#FFF9F3}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:transparent!important;color:var(--espresso);font-family:Arial,Helvetica,sans-serif}
-body{min-height:0}
-.widget{width:100%;margin:0;padding:0;background:transparent}
-.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-h1{font-family:'Dream Orphans',Georgia,serif;font-weight:400;font-size:clamp(27px,4.2vw,38px);line-height:1.12;margin:0;color:var(--espresso)}
-.count{font-size:12px;color:var(--rose);white-space:nowrap}
-.rule{height:1px;background:var(--petal);margin-bottom:7px}
-.tasks{list-style:none;margin:0;padding:0}
-.task{display:flex;align-items:center;gap:10px;padding:10px 1px;border-bottom:1px solid var(--petal)}
-.check{appearance:none;-webkit-appearance:none;flex:none;width:19px;height:19px;border:1.5px solid var(--rose);border-radius:4px;background:transparent;cursor:pointer;display:grid;place-items:center;margin:0}
-.check:checked{background:var(--rose)}
-.check:checked::after{content:'✓';color:white;font-size:14px;line-height:1}
-.task-label{flex:1;min-width:0;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
-.task.done .task-label{text-decoration:line-through;color:var(--rose);opacity:.75}
-.icon-btn{border:0;background:transparent;color:var(--rose);padding:4px;cursor:pointer;display:grid;place-items:center;border-radius:4px}
-.icon-btn:hover,.icon-btn:focus-visible{background:var(--petal)}
-.icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.add-form{display:flex;align-items:center;gap:8px;margin-top:12px}
-.add-input{flex:1;min-width:0;background:transparent;border:1px solid var(--petal);border-radius:5px;padding:11px 12px;color:var(--espresso);font:inherit;font-size:14px;outline:none}
-.add-input::placeholder{color:var(--rose);opacity:.85}
-.add-input:focus{border-color:var(--rose)}
-.add-button{background:var(--espresso);color:var(--ivory);border:0;border-radius:5px;padding:11px 15px;font-size:14px;cursor:pointer;white-space:nowrap}
-.add-button:hover{background:var(--rose)}
-.footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;min-height:22px}
-.footer-note{color:var(--rose);font-size:11px}
-.clear{border:0;background:transparent;color:var(--rose);font-size:11px;cursor:pointer;padding:4px 0}
-.clear:hover{text-decoration:underline}
-.empty{padding:14px 2px;color:var(--rose);font-size:13px}
-.edit-input{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--espresso);background:transparent;border:0;border-bottom:1px solid var(--rose);outline:none;padding:4px 0}
-@media(max-width:420px){h1{font-size:29px}.count{font-size:11px}.add-button{padding:11px 12px}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Romantic Garden | To-Do List</title>
+
+  <style>
+    @font-face {
+      font-family: "Antone";
+      src: url("./fonts/Antone.ttf") format("truetype");
+      font-display: swap;
+    }
+
+    :root {
+      --espresso: #402D19;
+      --rose: #BF687C;
+      --white: #FFFFFF;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background: var(--white);
+    }
+
+    body {
+      font-family: "Antone", Georgia, serif;
+      color: var(--espresso);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .todo-widget {
+      width: 100%;
+      padding: 16px;
+      background: var(--white);
+      container-type: inline-size;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 9px;
+      height: 9px;
+      min-width: 9px;
+      min-height: 9px;
+      padding: 0;
+      margin: 0;
+      border: 1px solid var(--espresso);
+      border-radius: 0;
+      background: var(--white);
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .checkbox:checked {
+      background: var(--rose);
+      border-color: var(--rose);
+    }
+
+    .checkbox:checked::after {
+      content: "";
+      position: absolute;
+      width: 4px;
+      height: 2px;
+      border-left: 1px solid white;
+      border-bottom: 1px solid white;
+      transform: rotate(-45deg);
+      top: 1px;
+      left: 1px;
+    }
+
+    .task-text {
+      flex: 1;
+      min-width: 0;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--espresso);
+      overflow-wrap: anywhere;
+    }
+
+    .task.completed .task-text {
+      color: var(--rose);
+      text-decoration: line-through;
+      text-decoration-color: var(--rose);
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .delete-button,
+    .add-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--espresso);
+    }
+
+    .delete-button svg,
+    .add-button svg {
+      width: 11px;
+      height: 11px;
+      fill: none;
+      stroke: var(--espresso);
+      stroke-width: 1.7;
+      stroke-linecap: round;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      margin: 17px 0 10px;
+      border: 0;
+      background: var(--rose);
+    }
+
+    .add-form {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .task-input {
+      flex: 1;
+      min-width: 0;
+      padding: 7px 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--espresso);
+      font-family: inherit;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .task-input::placeholder {
+      color: var(--espresso);
+      opacity: 0.75;
+    }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      margin-top: 12px;
+    }
+
+    .counter,
+    .toggle-button {
+      font-family: inherit;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .counter {
+      color: var(--espresso);
+    }
+
+    .toggle-button {
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--rose);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .checkbox:focus-visible,
+    .delete-button:focus-visible,
+    .add-button:focus-visible,
+    .toggle-button:focus-visible {
+      outline: 2px solid var(--rose);
+      outline-offset: 3px;
+    }
+
+    @container (max-width: 320px) {
+      .task {
+        gap: 9px;
+      }
+
+      .task-text,
+      .task-input {
+        font-size: 13px;
+      }
+
+      .counter,
+      .toggle-button {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .todo-widget {
+        padding: 12px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<main class="widget" aria-label="To-do list">
- <div class="heading"><h1>The Little To-Do List</h1><span class="count" id="count">0 of 0 done</span></div>
- <div class="rule"></div>
- <ul class="tasks" id="tasks"></ul>
- <form class="add-form" id="add-form"><input class="add-input" id="new-task" type="text" placeholder="Write a little something..." aria-label="New task" maxlength="500" autocomplete="off" required /><button class="add-button" type="submit">+ Add</button></form>
- <div class="footer"><span class="footer-note">One little thing at a time ♡</span><button class="clear" id="clear" type="button">Clear completed</button></div>
-</main>
-<script>
-(()=>{
- 'use strict';
- const KEY='romantic-garden-todo-v1';
- const list=document.getElementById('tasks'),count=document.getElementById('count'),form=document.getElementById('add-form'),input=document.getElementById('new-task'),clear=document.getElementById('clear');
- let tasks=[];
- try{const saved=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(saved))tasks=saved.filter(x=>x&&typeof x.id==='string'&&typeof x.text==='string').map(x=>({id:x.id,text:x.text,done:!!x.done}));}catch(e){console.warn('Could not load saved tasks',e)}
- const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(tasks))}catch(e){console.warn('Could not save tasks',e)}};
- const trashIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 10v7M14 10v7"/></svg>';
- const editIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16 4l4 4-11 11-5 1 1-5L16 4z"/></svg>';
- function render(){
-  list.replaceChildren();
-  for(const task of tasks){
-   const li=document.createElement('li');li.className='task'+(task.done?' done':'');
-   const check=document.createElement('input');check.type='checkbox';check.className='check';check.checked=task.done;check.setAttribute('aria-label','Complete '+task.text);check.addEventListener('change',()=>{task.done=check.checked;save();render()});
-   const label=document.createElement('span');label.className='task-label';label.textContent=task.text;
-   const edit=document.createElement('button');edit.type='button';edit.className='icon-btn';edit.title='Edit task';edit.setAttribute('aria-label','Edit '+task.text);edit.innerHTML=editIcon;edit.addEventListener('click',()=>{
-    const field=document.createElement('input');field.className='edit-input';field.value=task.text;field.maxLength=500;field.setAttribute('aria-label','Edit task');label.replaceWith(field);field.focus();field.select();let finished=false;
-    const finish=(commit)=>{if(finished)return;finished=true;const value=field.value.trim();if(commit&&value){task.text=value;save()}render()};
-    field.addEventListener('keydown',e=>{if(e.key==='Enter')finish(true);if(e.key==='Escape')finish(false)});field.addEventListener('blur',()=>finish(true));
-   });
-   const del=document.createElement('button');del.type='button';del.className='icon-btn';del.title='Delete task';del.setAttribute('aria-label','Delete '+task.text);del.innerHTML=trashIcon;del.addEventListener('click',()=>{tasks=tasks.filter(t=>t.id!==task.id);save();render()});
-   li.append(check,label,edit,del);list.append(li);
-  }
-  if(!tasks.length){const empty=document.createElement('li');empty.className='empty';empty.textContent='Nothing on your list yet ♡';list.append(empty)}
-  const completed=tasks.filter(t=>t.done).length;count.textContent=`${completed} of ${tasks.length} done`;clear.hidden=completed===0;
- }
- form.addEventListener('submit',e=>{e.preventDefault();const value=input.value.trim();if(!value)return;tasks.push({id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),text:value,done:false});input.value='';save();render();input.focus()});
- clear.addEventListener('click',()=>{tasks=tasks.filter(t=>!t.done);save();render()});
- window.addEventListener('storage',e=>{if(e.key===KEY){try{const incoming=JSON.parse(e.newValue||'[]');if(Array.isArray(incoming)){tasks=incoming;render()}}catch(_){}}});
- render();
-})();
-</script>
+
+  <main class="todo-widget">
+
+    <div class="task-list" id="taskList"></div>
+
+    <hr class="divider">
+
+    <form class="add-form" id="addForm">
+
+      <input
+        class="task-input"
+        id="taskInput"
+        type="text"
+        placeholder="Something to add?"
+        aria-label="New task"
+        autocomplete="off"
+        maxlength="500"
+      >
+
+      <button
+        class="add-button"
+        type="submit"
+        aria-label="Add task"
+      >
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M10 3 V17 M3 10 H17"/>
+        </svg>
+      </button>
+
+    </form>
+
+    <footer class="footer">
+
+      <span class="counter" id="counter"></span>
+
+      <button
+        class="toggle-button"
+        id="toggleCompleted"
+        type="button"
+      >
+        Hide completed
+      </button>
+
+    </footer>
+
+  </main>
+
+  <script>
+    const STORAGE_KEY = "romanticGardenTodoV1";
+    const VISIBILITY_KEY = "romanticGardenShowCompletedV1";
+
+    const defaultTasks = [
+      {
+        id: "sample-1",
+        text: "Plan my week",
+        done: false
+      },
+      {
+        id: "sample-2",
+        text: "Organise my Notion dashboard",
+        done: true
+      },
+      {
+        id: "sample-3",
+        text: "Finish my little projects",
+        done: false
+      }
+    ];
+
+    function loadTasks() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if (saved !== null) {
+          const parsed = JSON.parse(saved);
+
+          if (Array.isArray(parsed)) {
+            return parsed.filter(task =>
+              task &&
+              typeof task.id === "string" &&
+              typeof task.text === "string" &&
+              typeof task.done === "boolean"
+            );
+          }
+        }
+      } catch (error) {
+        console.warn("Unable to load saved tasks.", error);
+      }
+
+      return defaultTasks.map(task => ({ ...task }));
+    }
+
+    let tasks = loadTasks();
+
+    let showCompleted = true;
+
+    try {
+      showCompleted =
+        localStorage.getItem(VISIBILITY_KEY) !== "false";
+    } catch (error) {
+      console.warn("Unable to load visibility setting.", error);
+    }
+
+    const taskList = document.getElementById("taskList");
+    const taskInput = document.getElementById("taskInput");
+    const addForm = document.getElementById("addForm");
+    const counter = document.getElementById("counter");
+    const toggleCompleted =
+      document.getElementById("toggleCompleted");
+
+    function saveTasks() {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(tasks)
+        );
+      } catch (error) {
+        console.warn("Unable to save tasks.", error);
+      }
+    }
+
+    function saveVisibility() {
+      try {
+        localStorage.setItem(
+          VISIBILITY_KEY,
+          String(showCompleted)
+        );
+      } catch (error) {
+        console.warn("Unable to save visibility.", error);
+      }
+    }
+
+    function createIcon(type) {
+      const svgNS = "http://www.w3.org/2000/svg";
+
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("viewBox", "0 0 20 20");
+      svg.setAttribute("aria-hidden", "true");
+
+      const path = document.createElementNS(svgNS, "path");
+
+      if (type === "delete") {
+        path.setAttribute(
+          "d",
+          "M5 5 L15 15 M15 5 L5 15"
+        );
+      }
+
+      svg.appendChild(path);
+      return svg;
+    }
+
+    function renderTasks() {
+      taskList.replaceChildren();
+
+      const visibleTasks = tasks.filter(task =>
+        showCompleted || !task.done
+      );
+
+      visibleTasks.forEach(task => {
+        const row = document.createElement("div");
+        row.className =
+          "task" + (task.done ? " completed" : "");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "checkbox";
+        checkbox.checked = task.done;
+        checkbox.setAttribute(
+          "aria-label",
+          "Mark " + task.text + " as " +
+          (task.done ? "incomplete" : "complete")
+        );
+
+        checkbox.addEventListener("change", () => {
+          task.done = checkbox.checked;
+          saveTasks();
+          renderTasks();
+        });
+
+        const text = document.createElement("span");
+        text.className = "task-text";
+        text.textContent = task.text;
+
+        const deleteButton =
+          document.createElement("button");
+
+        deleteButton.type = "button";
+        deleteButton.className = "delete-button";
+        deleteButton.setAttribute(
+          "aria-label",
+          "Delete " + task.text
+        );
+
+        deleteButton.appendChild(createIcon("delete"));
+
+        deleteButton.addEventListener("click", () => {
+          tasks = tasks.filter(item => item.id !== task.id);
+          saveTasks();
+          renderTasks();
+        });
+
+        row.appendChild(checkbox);
+        row.appendChild(text);
+        row.appendChild(deleteButton);
+
+        taskList.appendChild(row);
+      });
+
+      const completedCount =
+        tasks.filter(task => task.done).length;
+
+      counter.textContent =
+        completedCount +
+        " of " +
+        tasks.length +
+        " completed";
+
+      toggleCompleted.textContent =
+        showCompleted
+          ? "Hide completed"
+          : "Show completed";
+    }
+
+    function addTask() {
+      const value = taskInput.value.trim();
+
+      if (!value) return;
+
+      const id =
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : Date.now().toString() +
+            "-" +
+            Math.random().toString(36).slice(2);
+
+      tasks.push({
+        id: id,
+        text: value,
+        done: false
+      });
+
+      taskInput.value = "";
+
+      saveTasks();
+      renderTasks();
+
+      taskInput.focus();
+    }
+
+    addForm.addEventListener("submit", event => {
+      event.preventDefault();
+      addTask();
+    });
+
+    toggleCompleted.addEventListener("click", () => {
+      showCompleted = !showCompleted;
+      saveVisibility();
+      renderTasks();
+    });
+
+    renderTasks();
+  </script>
+
 </body>
 </html>
