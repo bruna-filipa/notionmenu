@@ -4,16 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Romantic Garden | To-Do List</title>
 
-  <style>
-    @font-face {
-      font-family: "Dream Orphans";
-      src: url("./fonts/Dream Orphans.otf") format("opentype");
-      font-display: swap;
-    }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
+  <style>
     :root {
       --espresso: #402D19;
       --rose: #BF687C;
@@ -24,8 +21,7 @@
       box-sizing: border-box;
     }
 
-    html,
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       width: 100%;
@@ -34,7 +30,7 @@
     }
 
     body {
-      font-family: "Dream Orphans", Georgia, serif;
+      font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
       color: var(--espresso);
       -webkit-font-smoothing: antialiased;
     }
@@ -96,8 +92,9 @@
     .task-text {
       flex: 1;
       min-width: 0;
-      font-size: 15px;
-      line-height: 1.5;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.6;
       color: var(--espresso);
       overflow-wrap: anywhere;
     }
@@ -138,38 +135,39 @@
       stroke-linecap: round;
     }
 
-    .divider {
-      width: 100%;
-      height: 1px;
-      margin: 17px 0 10px;
-      border: 0;
-      background: var(--rose);
-    }
+    /* Input box with the plus inside */
 
     .add-form {
       display: flex;
       align-items: center;
       gap: 8px;
       width: 100%;
+      margin-top: 16px;
+      padding: 5px 9px 5px 12px;
+      border: 1px solid var(--rose);
+      border-radius: 6px;
+      background: var(--white);
     }
 
     .task-input {
       flex: 1;
       min-width: 0;
-      padding: 7px 0;
+      padding: 6px 0;
       border: none;
       outline: none;
       background: transparent;
       color: var(--espresso);
       font-family: inherit;
-      font-size: 15px;
+      font-size: 13px;
       line-height: 1.4;
     }
 
     .task-input::placeholder {
       color: var(--espresso);
-      opacity: 0.75;
+      opacity: 0.7;
     }
+
+    /* Completion counter and visibility toggle */
 
     .footer {
       display: flex;
@@ -177,14 +175,14 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 6px 12px;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     .counter,
     .toggle-button {
       font-family: inherit;
-      font-size: 12px;
-      line-height: 1.4;
+      font-size: 11px;
+      line-height: 1.5;
     }
 
     .counter {
@@ -196,14 +194,24 @@
       border: none;
       background: transparent;
       color: var(--rose);
-      text-decoration: underline;
-      text-underline-offset: 2px;
+      text-decoration: none;
+    }
+
+    /* Rose divider below the footer */
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      margin: 13px 0 0;
+      border: 0;
+      background: var(--rose);
     }
 
     .checkbox:focus-visible,
     .delete-button:focus-visible,
     .add-button:focus-visible,
-    .toggle-button:focus-visible {
+    .toggle-button:focus-visible,
+    .add-form:focus-within {
       outline: 2px solid var(--rose);
       outline-offset: 3px;
     }
@@ -215,12 +223,12 @@
 
       .task-text,
       .task-input {
-        font-size: 13px;
+        font-size: 12px;
       }
 
       .counter,
       .toggle-button {
-        font-size: 11px;
+        font-size: 10px;
       }
     }
 
@@ -237,8 +245,6 @@
   <main class="todo-widget">
 
     <div class="task-list" id="taskList"></div>
-
-    <hr class="divider">
 
     <form class="add-form" id="addForm">
 
@@ -278,29 +284,14 @@
 
     </footer>
 
+    <hr class="divider">
+
   </main>
 
   <script>
-    const STORAGE_KEY = "romanticGardenTodoV1";
-    const VISIBILITY_KEY = "romanticGardenShowCompletedV1";
-
-    const defaultTasks = [
-      {
-        id: "sample-1",
-        text: "Plan my week",
-        done: false
-      },
-      {
-        id: "sample-2",
-        text: "Organise my Notion dashboard",
-        done: true
-      },
-      {
-        id: "sample-3",
-        text: "Finish my little projects",
-        done: false
-      }
-    ];
+    // Keep the existing storage keys to preserve your tasks.
+    const STORAGE_KEY = "romanticGardenTodoV2";
+    const VISIBILITY_KEY = "romanticGardenShowCompletedV2";
 
     function loadTasks() {
       try {
@@ -322,11 +313,10 @@
         console.warn("Unable to load saved tasks.", error);
       }
 
-      return defaultTasks.map(task => ({ ...task }));
+      return [];
     }
 
     let tasks = loadTasks();
-
     let showCompleted = true;
 
     try {
@@ -365,7 +355,7 @@
       }
     }
 
-    function createIcon() {
+    function createDeleteIcon() {
       const svgNS = "http://www.w3.org/2000/svg";
 
       const svg = document.createElementNS(svgNS, "svg");
@@ -398,6 +388,7 @@
         checkbox.type = "checkbox";
         checkbox.className = "checkbox";
         checkbox.checked = task.done;
+
         checkbox.setAttribute(
           "aria-label",
           "Mark " + task.text + " as " +
@@ -419,12 +410,13 @@
 
         deleteButton.type = "button";
         deleteButton.className = "delete-button";
+
         deleteButton.setAttribute(
           "aria-label",
           "Delete " + task.text
         );
 
-        deleteButton.appendChild(createIcon());
+        deleteButton.appendChild(createDeleteIcon());
 
         deleteButton.addEventListener("click", () => {
           tasks = tasks.filter(item => item.id !== task.id);
