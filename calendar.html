@@ -4,7 +4,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Romantic Calendar</title>
 
 <style>
@@ -21,17 +20,19 @@
     --primary: #8D2B36;
     --secondary: #BE677C;
 
-    --row-height: 32px;
     --date-size: 12px;
     --today-circle: 22px;
+    --date-height: 22px;
+    --row-gap: 88px;
+    --month-gap: 36px;
+    --weekday-padding: 12px;
   }
 
   * {
     box-sizing: border-box;
   }
 
-  html,
-  body {
+  html, body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -44,13 +45,11 @@
     color: var(--primary);
   }
 
-  /* MAIN CALENDAR */
-
   .calendar {
     width: 100%;
     max-width: 650px;
     margin: 0 auto;
-    padding: 14px 18px 18px;
+    padding: 20px 18px 30px;
     background: var(--background);
   }
 
@@ -61,19 +60,17 @@
     grid-template-columns: 32px minmax(0, 1fr) 32px;
     align-items: center;
     width: 100%;
-    margin-bottom: 18px;
+    margin-bottom: var(--month-gap);
   }
 
   .month-title {
     margin: 0;
     text-align: center;
-
     font-family: "Antone", Arial, sans-serif;
     font-size: clamp(18px, 4vw, 28px);
     font-weight: 400;
     letter-spacing: 1px;
     line-height: 1.2;
-
     color: var(--primary);
     white-space: nowrap;
   }
@@ -82,14 +79,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 32px;
     height: 32px;
-
     background: transparent;
     border: none;
     padding: 5px;
-
     color: var(--primary);
     cursor: pointer;
   }
@@ -97,7 +91,6 @@
   .arrow svg {
     width: 17px;
     height: 17px;
-
     stroke: currentColor;
     stroke-width: 1.7;
     fill: none;
@@ -109,23 +102,26 @@
     opacity: 0.65;
   }
 
-  /* WEEKDAY LABELS */
+  /* WEEKDAY HEADINGS */
 
   .weekdays {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
   }
 
   .weekday {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--weekday-padding) 0;
 
+    text-align: center;
     font-family: "Antone", Arial, sans-serif;
     font-size: 13px;
     font-weight: 400;
     line-height: 1.2;
-
     color: var(--secondary);
   }
 
@@ -134,20 +130,19 @@
   .days {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    grid-auto-rows: var(--row-height);
+    grid-auto-rows: var(--date-height);
+    row-gap: var(--row-gap);
     width: 100%;
-    row-gap: 0;
   }
 
   .day {
     position: relative;
-
     display: flex;
     align-items: center;
     justify-content: center;
 
     width: 100%;
-    height: var(--row-height);
+    height: var(--date-height);
 
     font-family: "Antone", Arial, sans-serif;
     font-size: var(--date-size);
@@ -163,7 +158,7 @@
     visibility: hidden;
   }
 
-  /* TODAY HIGHLIGHT */
+  /* TODAY */
 
   .day.today {
     color: var(--background);
@@ -173,10 +168,8 @@
     content: "";
     position: absolute;
     z-index: -1;
-
     width: var(--today-circle);
     height: var(--today-circle);
-
     border-radius: 50%;
     background: var(--secondary);
   }
@@ -185,17 +178,16 @@
 
   @media (max-width: 400px) {
     :root {
-      --row-height: 30px;
       --date-size: 11px;
       --today-circle: 21px;
+      --date-height: 21px;
+      --row-gap: 72px;
+      --month-gap: 30px;
+      --weekday-padding: 10px;
     }
 
     .calendar {
-      padding: 12px 10px 14px;
-    }
-
-    .header {
-      margin-bottom: 14px;
+      padding: 16px 10px 24px;
     }
 
     .month-title {
@@ -212,18 +204,20 @@
 
   @media (max-width: 250px) {
     :root {
-      --row-height: 27px;
       --date-size: 10px;
       --today-circle: 19px;
+      --date-height: 19px;
+      --row-gap: 52px;
+      --month-gap: 22px;
+      --weekday-padding: 8px;
     }
 
     .calendar {
-      padding: 10px 6px;
+      padding: 12px 6px 20px;
     }
 
     .header {
       grid-template-columns: 24px minmax(0, 1fr) 24px;
-      margin-bottom: 10px;
     }
 
     .arrow {
@@ -253,19 +247,15 @@
 
 <div class="calendar">
 
-  <!-- MONTH NAVIGATION -->
-
   <div class="header">
 
     <button
       class="arrow"
       onclick="changeMonth(-1)"
       aria-label="Previous month">
-
       <svg viewBox="0 0 24 24">
         <path d="M15 3 L6 12 L15 21"/>
       </svg>
-
     </button>
 
     <h1 class="month-title" id="monthTitle">
@@ -276,16 +266,12 @@
       class="arrow"
       onclick="changeMonth(1)"
       aria-label="Next month">
-
       <svg viewBox="0 0 24 24">
         <path d="M9 3 L18 12 L9 21"/>
       </svg>
-
     </button>
 
   </div>
-
-  <!-- MONDAY TO SUNDAY -->
 
   <div class="weekdays">
     <div class="weekday">M</div>
@@ -296,8 +282,6 @@
     <div class="weekday">S</div>
     <div class="weekday">S</div>
   </div>
-
-  <!-- CALENDAR DATES -->
 
   <div class="days" id="calendarDays"></div>
 
@@ -310,30 +294,20 @@
   let currentYear = today.getFullYear();
 
   const monthNames = [
-    "JANUARY",
-    "FEBRUARY",
-    "MARCH",
-    "APRIL",
-    "MAY",
-    "JUNE",
-    "JULY",
-    "AUGUST",
-    "SEPTEMBER",
-    "OCTOBER",
-    "NOVEMBER",
-    "DECEMBER"
+    "JANUARY", "FEBRUARY", "MARCH",
+    "APRIL", "MAY", "JUNE",
+    "JULY", "AUGUST", "SEPTEMBER",
+    "OCTOBER", "NOVEMBER", "DECEMBER"
   ];
 
   const monthTitle = document.getElementById("monthTitle");
   const calendarDays = document.getElementById("calendarDays");
 
-  /* RENDER CALENDAR */
-
   function renderCalendar() {
     calendarDays.innerHTML = "";
+
     monthTitle.textContent = monthNames[currentMonth];
 
-    // Monday-first indexing
     const firstDay = (
       new Date(currentYear, currentMonth, 1).getDay() + 6
     ) % 7;
@@ -344,20 +318,18 @@
       0
     ).getDate();
 
-    // Empty cells before the first date
     for (let i = 0; i < firstDay; i++) {
       const empty = document.createElement("div");
       empty.className = "day empty";
       calendarDays.appendChild(empty);
     }
 
-    // Create dates
+    const actualToday = new Date();
+
     for (let day = 1; day <= daysInMonth; day++) {
       const dayElement = document.createElement("div");
       dayElement.className = "day";
       dayElement.textContent = day;
-
-      const actualToday = new Date();
 
       if (
         day === actualToday.getDate() &&
@@ -370,8 +342,6 @@
       calendarDays.appendChild(dayElement);
     }
   }
-
-  /* CHANGE MONTH */
 
   function changeMonth(direction) {
     currentMonth += direction;
@@ -389,11 +359,7 @@
     renderCalendar();
   }
 
-  /* INITIALISE */
-
   renderCalendar();
-
-  // Refresh today's highlight automatically
   setInterval(renderCalendar, 60000);
 </script>
 
