@@ -1,0 +1,1274 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Romantic Garden | Medication Tracker</title>
+
+<style>
+  :root {
+    --wine: #8D2B36;
+    --pink: #F5DFE5;
+    --pale: #F8F0F2;
+    --outline: #E9C8D0;
+    --white: #FFFFFF;
+    --muted: #AAA0A3;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--white);
+    color: var(--wine);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13px;
+  }
+
+  button, input, select, textarea {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  .tracker {
+    width: 100%;
+    padding: 12px;
+    background: white;
+  }
+
+  .date-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+  }
+
+  .date-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: var(--wine);
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px;
+  }
+
+  .date-picker-wrap {
+    position: relative;
+  }
+
+  #datePicker {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 32px 5px;
+  }
+
+  .empty svg {
+    display: block;
+    margin: 0 auto 10px;
+  }
+
+  .empty-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .empty-subtitle {
+    font-size: 12px;
+  }
+
+  .med-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .med-row + .med-row {
+    border-top: 1px solid var(--wine);
+  }
+
+  .med-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .med-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .med-name {
+    border: 0;
+    background: none;
+    color: var(--wine);
+    padding: 0;
+    font-weight: 600;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .med-name:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .notes-button {
+    border: 1px solid var(--outline);
+    background: white;
+    border-radius: 99px;
+    padding: 2px 5px;
+    color: var(--wine);
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .detail {
+    margin-top: 5px;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+
+  .med-row.taken .med-name,
+  .med-row.taken .detail {
+    color: var(--muted);
+  }
+
+  .taken-check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--wine);
+    border-radius: 2px;
+    background: white;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .taken-check:checked {
+    background: var(--wine);
+  }
+
+  .taken-check:checked::after {
+    content: "✓";
+    color: white;
+    position: absolute;
+    font-size: 9px;
+    top: -2px;
+    left: 1px;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .count {
+    font-size: 12px;
+  }
+
+  .footer-buttons,
+  .editor-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border: 0;
+    border-radius: 6px;
+    padding: 9px 12px;
+    background: var(--pink);
+    color: var(--wine);
+    font-size: 12px;
+    line-height: 1.2;
+    text-align: center;
+    min-height: 32px;
+  }
+
+  .btn.dark {
+    background: var(--wine);
+    color: white;
+  }
+
+  .editor-shell {
+    background: var(--pale);
+    border-radius: 12px;
+    padding: 8px;
+    margin-top: 15px;
+  }
+
+  .editor {
+    background: white;
+    border-radius: 9px;
+    padding: 13px;
+  }
+
+  .editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .editor-title {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .close-button {
+    border: 0;
+    background: transparent;
+    color: var(--wine);
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .field {
+    width: 100%;
+    min-width: 0;
+    padding: 9px 8px;
+    border: 1px solid #E4E0E1;
+    border-radius: 6px;
+    background: white;
+    color: var(--wine);
+    outline: none;
+    font-size: 12px;
+  }
+
+  .field:focus {
+    border-color: var(--wine);
+  }
+
+  .field::placeholder {
+    color: #A99A9E;
+  }
+
+  .search-container {
+    position: relative;
+    min-width: 0;
+  }
+
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .search-field input {
+    flex: 1;
+  }
+
+  .dropdown-arrow {
+    background: transparent;
+    color: var(--wine);
+    border: 0;
+    padding: 5px;
+  }
+
+  .suggestions {
+    position: absolute;
+    z-index: 50;
+    top: calc(100% + 3px);
+    left: 0;
+    width: 100%;
+    max-height: 160px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid var(--outline);
+    border-radius: 6px;
+    box-shadow: 0 5px 15px #402D1918;
+  }
+
+  .suggestion {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px;
+    border: 0;
+    background: white;
+    color: var(--wine);
+    font-size: 12px;
+  }
+
+  .suggestion:hover,
+  .suggestion.active {
+    background: var(--pink);
+  }
+
+  .strengths,
+  .effect-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 8px 0 12px;
+  }
+
+  .strength,
+  .effect-tag {
+    border: 0;
+    border-radius: 5px;
+    padding: 5px 8px;
+    background: var(--pink);
+    color: var(--wine);
+    font-size: 11px;
+  }
+
+  .strength.active {
+    background: var(--wine);
+    color: white;
+  }
+
+  .effect-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .other-row {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0;
+  }
+
+  .other-row input {
+    flex: 1;
+  }
+
+  .editor-actions {
+    margin-top: 14px;
+  }
+
+  textarea.field {
+    min-height: 95px;
+    resize: vertical;
+    margin-bottom: 10px;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  @media(max-width: 430px) {
+    .tracker { padding: 9px; }
+    .editor { padding: 10px; }
+    .footer { align-items: flex-start; }
+    .footer-buttons { gap: 5px; }
+    .btn { padding: 8px 9px; font-size: 11px; }
+    .fields { gap: 5px; }
+    .field { padding: 8px 5px; font-size: 11px; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="tracker">
+  <div class="date-bar">
+    <div class="date-picker-wrap">
+      <button class="date-button" id="dateLabel" type="button">
+        ♧ <span id="dateText"></span>
+      </button>
+      <input type="date" id="datePicker" aria-label="Select date">
+    </div>
+  </div>
+
+  <div id="medicationList"></div>
+
+  <div class="footer">
+    <span class="count" id="takenCount">0 of 0 taken</span>
+    <div class="footer-buttons">
+      <button class="btn" id="addMedication" type="button">
+        + Add New Medication
+      </button>
+      <button class="btn" id="completeDay" type="button">
+        ✓ Day Completed
+      </button>
+    </div>
+  </div>
+
+  <div id="editorArea"></div>
+</div>
+
+<script>
+"use strict";
+
+/* ==========================================
+   MEDICATION CATALOGUE
+========================================== */
+
+const catalogue = `
+Aciclovir|Alendronic acid|Allopurinol|Amitriptyline|Amlodipine|
+Amoxicillin|Anastrozole|Apixaban|Aripiprazole|Aspirin|
+Atenolol|Atorvastatin|Azathioprine|Azithromycin|Baclofen|
+Beclometasone|Betahistine|Bisoprolol|Budesonide|Bupropion|
+Buspirone|Candesartan|Carbamazepine|Carvedilol|Celecoxib|
+Cetirizine|Citalopram|Clarithromycin|Clonazepam|Clopidogrel|
+Codeine|Colchicine|Cyclizine|Dapagliflozin|Desogestrel|
+Dexamfetamine|Diazepam|Diclofenac|Doxycycline|Duloxetine|
+Elvanse (lisdexamfetamine)|Empagliflozin|Enalapril|
+Escitalopram|Esomeprazole|Famotidine|Fexofenadine|
+Fluconazole|Fluoxetine|Fluticasone|Folic acid|Furosemide|
+Gabapentin|Gliclazide|Hydrocortisone|Hydroxyzine|Ibuprofen|
+Indapamide|Isotretinoin|Lamotrigine|Lansoprazole|Lercanidipine|
+Letrozole|Levetiracetam|Levothyroxine|Lisinopril|Lithium|
+Loperamide|Loratadine|Losartan|Melatonin|Metformin|
+Methotrexate|Methylphenidate|Metoclopramide|Metronidazole|
+Mirtazapine|Montelukast|Morphine|Mounjaro (tirzepatide)|
+Naproxen|Nitrofurantoin|Nortriptyline|Olanzapine|Omeprazole|
+Ondansetron|Oxycodone|Pantoprazole|Paracetamol|Penicillin V|
+Prednisolone|Pregabalin|Promethazine|Propranolol|Quetiapine|
+Ramipril|Risperidone|Rivaroxaban|Rosuvastatin|Salbutamol|
+Semaglutide|Sertraline|Simvastatin|Sitagliptin|Spironolactone|
+Sumatriptan|Tadalafil|Tamoxifen|Tamsulosin|Topiramate|
+Tramadol|Trazodone|Trimethoprim|Venlafaxine|Verapamil|
+Warfarin|Zolmitriptan|Zopiclone
+`.split("|").map(x => x.trim()).filter(Boolean);
+
+const strengths = {
+  "Elvanse (lisdexamfetamine)":
+    ["20 mg","30 mg","40 mg","50 mg","60 mg","70 mg"],
+  "Levothyroxine":
+    ["25 micrograms","50 micrograms","75 micrograms",
+     "100 micrograms","125 micrograms"],
+  "Propranolol":["10 mg","20 mg","40 mg","80 mg"],
+  "Sumatriptan":["50 mg","100 mg"],
+  "Mounjaro (tirzepatide)":
+    ["2.5 mg","5 mg","7.5 mg","10 mg","12.5 mg","15 mg"],
+  "Metformin":["500 mg","850 mg","1000 mg"],
+  "Sertraline":["25 mg","50 mg","100 mg"],
+  "Dexamfetamine":["5 mg","10 mg"],
+  "Paracetamol":["500 mg"],
+  "Ibuprofen":["200 mg","400 mg"],
+  "Omeprazole":["10 mg","20 mg","40 mg"],
+  "Amitriptyline":["10 mg","25 mg","50 mg"],
+  "Cetirizine":["10 mg"],
+  "Fluoxetine":["20 mg","40 mg"],
+  "Gabapentin":["100 mg","300 mg","400 mg"],
+  "Pregabalin":["25 mg","75 mg","150 mg"],
+  "Escitalopram":["5 mg","10 mg","20 mg"],
+  "Citalopram":["10 mg","20 mg","40 mg"],
+  "Melatonin":["2 mg","3 mg","5 mg"],
+  "Amlodipine":["5 mg","10 mg"],
+  "Atorvastatin":["10 mg","20 mg","40 mg","80 mg"],
+  "Bisoprolol":["2.5 mg","5 mg","10 mg"],
+  "Losartan":["25 mg","50 mg","100 mg"],
+  "Ramipril":["1.25 mg","2.5 mg","5 mg","10 mg"],
+  "Naproxen":["250 mg","500 mg"],
+  "Ondansetron":["4 mg","8 mg"],
+  "Topiramate":["25 mg","50 mg","100 mg"],
+  "Methylphenidate":["5 mg","10 mg","20 mg"],
+  "Venlafaxine":["37.5 mg","75 mg","150 mg"],
+  "Mirtazapine":["15 mg","30 mg","45 mg"],
+  "Quetiapine":["25 mg","100 mg","200 mg"],
+  "Lansoprazole":["15 mg","30 mg"],
+  "Fexofenadine":["120 mg","180 mg"],
+  "Loratadine":["10 mg"],
+  "Aspirin":["75 mg","300 mg"],
+  "Duloxetine":["30 mg","60 mg"],
+  "Spironolactone":["25 mg","50 mg","100 mg"],
+  "Prednisolone":["5 mg","20 mg"]
+};
+
+// Formulations for display, not prescribing advice.
+
+const symptoms = `
+Headache|Migraine|Dizziness|Vertigo|Nausea|Vomiting|
+Diarrhoea|Constipation|Stomach pain|Bloating|Gas|
+Heartburn|Indigestion|Loss of appetite|Increased appetite|
+Dry mouth|Taste changes|Fatigue|Drowsiness|Insomnia|
+Vivid dreams|Nightmares|Restlessness|Anxiety|
+Irritability|Mood swings|Low mood|Brain fog|
+Memory problems|Difficulty concentrating|Tremor|
+Muscle cramps|Muscle weakness|Joint pain|Back pain|
+Tingling|Numbness|Blurred vision|Light sensitivity|
+Ringing in ears|Nasal congestion|Sore throat|Cough|
+Shortness of breath|Palpitations|Sweating|Night sweats|
+Hot flushes|Chills|Skin rash|Itching|Hives|
+Dry skin|Acne|Hair loss|Bruising|Swelling|Thirst|
+Weight gain|Weight loss|Menstrual changes|Spotting|
+Reduced libido|Other
+`.split("|").map(x => x.trim()).filter(Boolean);
+
+/* ==========================================
+   TEMPORARY IN-MEMORY DATA
+   Database integration comes later.
+========================================== */
+
+let medications = [];
+let dailyLogs = {};
+let selectedDate = localDate(new Date());
+
+let editor = null;
+let notesEditor = null;
+let suggestionIndex = 0;
+let visibleMatches = [];
+
+function localDate(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[c]);
+}
+
+function getDay() {
+  if (!dailyLogs[selectedDate]) dailyLogs[selectedDate] = {};
+  return dailyLogs[selectedDate];
+}
+
+function getRecord(id) {
+  return getDay()[id] || {
+    taken:false, time:"", effects:[], notes:""
+  };
+}
+
+function updateRecord(id, patch) {
+  getDay()[id] = {...getRecord(id), ...patch};
+}
+
+function formatDate(value) {
+  const d = new Date(value + "T12:00:00");
+  const n = d.getDate();
+  const suffix = n % 100 >= 11 && n % 100 <= 13
+    ? "th"
+    : ({1:"st",2:"nd",3:"rd"}[n%10] || "th");
+
+  return `${n}${suffix} ${d.toLocaleDateString("en-GB",{
+    month:"long",year:"numeric"
+  })}`;
+}
+
+/* ==========================================
+   MAIN TRACKER
+========================================== */
+
+function render() {
+  document.getElementById("dateText").textContent =
+    formatDate(selectedDate);
+  document.getElementById("datePicker").value = selectedDate;
+
+  const list = document.getElementById("medicationList");
+
+  if (!medications.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <svg width="23" height="23" viewBox="0 0 24 24"
+             fill="none" stroke="#8D2B36"
+             stroke-width="1.7" stroke-linecap="round">
+          <path d="M10.5 20.5a6 6 0 0 1-8.5-8.5l10-10
+                   a6 6 0 0 1 8.5 8.5z"/>
+          <path d="m8 6 10 10"/>
+        </svg>
+        <div class="empty-title">No medications added yet</div>
+        <div class="empty-subtitle">
+          Add your first medication to get started.
+        </div>
+      </div>`;
+  } else {
+    list.innerHTML = medications.map(m => {
+      const r = getRecord(m.id);
+
+      return `
+        <div class="med-row ${r.taken ? "taken" : ""}">
+          <div class="med-content">
+            <div class="med-heading">
+              <button class="med-name"
+                data-med-id="${m.id}" type="button">
+                ${escapeHTML(m.name)} | ${escapeHTML(m.dose)}
+              </button>
+
+              <button class="notes-button"
+                data-notes-id="${m.id}" type="button">
+                ✎ ${r.notes ? "Edit notes" : "Add notes"}
+              </button>
+            </div>
+
+            ${r.effects?.length ? `
+              <div class="detail">
+                Side Effects:
+                ${escapeHTML(r.effects.join(", "))}
+              </div>` : ""}
+
+            ${r.notes ? `
+              <div class="detail">
+                Notes: ${escapeHTML(r.notes)}
+              </div>` : ""}
+          </div>
+
+          <input class="taken-check" type="checkbox"
+            aria-label="Mark ${escapeHTML(m.name)} as taken"
+            data-check-id="${m.id}"
+            ${r.taken ? "checked" : ""}>
+        </div>`;
+    }).join("");
+  }
+
+  document.getElementById("takenCount").textContent =
+    `${medications.filter(m=>getRecord(m.id).taken).length}` +
+    ` of ${medications.length} taken`;
+
+  renderEditor();
+}
+
+/* ==========================================
+   OPEN / CLOSE / SAVE
+========================================== */
+
+function openEditor(med = null) {
+  notesEditor = null;
+
+  editor = {
+    id:med?.id ?? null,
+    name:med?.name ?? "",
+    dose:med?.dose ?? "",
+    time:med ? getRecord(med.id).time : "",
+    effects:med ? [...getRecord(med.id).effects] : []
+  };
+
+  renderEditor();
+}
+
+function saveEditor() {
+  if (!editor) return false;
+
+  const name = editor.name.trim();
+  if (!name) {
+    document.getElementById("medName")?.focus();
+    return false;
+  }
+
+  if (editor.id === null) {
+    editor.id = String(Date.now()) +
+      Math.random().toString(36).slice(2);
+
+    medications.push({
+      id:editor.id,
+      name,
+      dose:editor.dose
+    });
+  } else {
+    const med = medications.find(m=>m.id===editor.id);
+    if (med) {
+      med.name = name;
+      med.dose = editor.dose;
+    }
+  }
+
+  updateRecord(editor.id,{
+    time:editor.time,
+    effects:[...editor.effects]
+  });
+
+  editor = null;
+  render();
+  return true;
+}
+
+function toggleMedication(id) {
+  const med = medications.find(m=>m.id===id);
+  if (!med) return;
+
+  if (editor?.id === id) {
+    // Same medication clicked again:
+    // save all edits and close.
+    saveEditor();
+  } else if (editor) {
+    // Preserve edits before switching medications.
+    if (saveEditor()) {
+      openEditor(medications.find(m=>m.id===id));
+    }
+  } else {
+    openEditor(med);
+  }
+}
+
+/* ==========================================
+   EDITOR UI
+========================================== */
+
+function renderEditor() {
+  const area = document.getElementById("editorArea");
+
+  if (notesEditor) {
+    renderNotesEditor();
+    return;
+  }
+
+  if (!editor) {
+    area.innerHTML = "";
+    return;
+  }
+
+  const isNew = editor.id === null;
+
+  area.innerHTML = `
+    <div class="editor-shell">
+      <div class="editor">
+        <div class="editor-header">
+          <span class="editor-title">
+            ${isNew ? "Log New Medication" : "Edit Medication"}
+          </span>
+          <button class="close-button" id="closeEditor"
+            type="button" aria-label="Close">×</button>
+        </div>
+
+        <div class="fields">
+          <div class="search-container">
+            <div class="search-field">
+              <input id="medName" class="field"
+                type="text" autocomplete="off"
+                placeholder="Medication Name"
+                value="${escapeHTML(editor.name)}"
+                aria-label="Medication Name"
+                aria-autocomplete="list"
+                aria-controls="suggestions">
+
+              <button class="dropdown-arrow" id="showSuggestions"
+                type="button" aria-label="Show medications">⌄</button>
+            </div>
+            <div id="suggestions" class="suggestions hidden"
+                 role="listbox"></div>
+          </div>
+
+          <input id="medDose" class="field"
+            type="text" placeholder="Dosage"
+            aria-label="Dosage"
+            value="${escapeHTML(editor.dose)}">
+        </div>
+
+        <div id="strengthArea"></div>
+
+        <div class="fields">
+          <select id="medTime" class="field"
+            aria-label="Time Taken">
+            ${buildTimeOptions()}
+          </select>
+
+          <select id="sideEffect" class="field"
+            aria-label="Side Effects">
+            <option value="">Side Effects</option>
+            ${symptoms.map(s=>`
+              <option value="${escapeHTML(s)}">
+                ${escapeHTML(s)}
+              </option>`).join("")}
+          </select>
+        </div>
+
+        <div id="otherEffectArea"></div>
+        <div id="effectTags"></div>
+
+        <div class="editor-actions">
+          ${!isNew ? `
+            <button class="btn" id="removeMedication"
+              type="button">Remove Medication</button>
+          ` : ""}
+          <button class="btn dark" id="saveMedication"
+            type="button">✓ Save & Close</button>
+        </div>
+      </div>
+    </div>`;
+
+  bindEditorEvents();
+  renderStrengths();
+  renderEffectTags();
+}
+
+function buildTimeOptions() {
+  let html = `<option value="">Time Taken</option>`;
+
+  for (let i=0; i<288; i++) {
+    const h = String(Math.floor(i/12)).padStart(2,"0");
+    const m = String((i%12)*5).padStart(2,"0");
+    const v = `${h}:${m}`;
+
+    html += `<option value="${v}"
+      ${editor.time===v?"selected":""}>${v}</option>`;
+  }
+
+  return html;
+}
+
+/* ==========================================
+   AUTOCOMPLETE + KEYBOARD SUPPORT
+========================================== */
+
+function matchingMedications(query) {
+  const q = query.trim().toLowerCase();
+
+  return catalogue.filter(n =>
+    !q || n.toLowerCase().includes(q)
+  ).slice(0,25);
+}
+
+function showSuggestions() {
+  const box = document.getElementById("suggestions");
+  if (!box) return;
+
+  visibleMatches = matchingMedications(editor.name);
+  suggestionIndex = 0;
+
+  if (!visibleMatches.length) {
+    box.innerHTML = `
+      <div style="padding:9px;font-size:11px">
+        No matching medications
+      </div>`;
+  } else {
+    box.innerHTML = visibleMatches.map((n,i)=>`
+      <button type="button"
+        class="suggestion ${i===suggestionIndex?"active":""}"
+        data-suggestion="${i}" role="option"
+        aria-selected="${i===suggestionIndex}">
+        ${escapeHTML(n)}
+      </button>`).join("");
+  }
+
+  box.classList.remove("hidden");
+}
+
+function hideSuggestions() {
+  document.getElementById("suggestions")
+    ?.classList.add("hidden");
+  visibleMatches = [];
+}
+
+function highlightSuggestion() {
+  const options = document.querySelectorAll(".suggestion");
+
+  options.forEach((el,i)=>{
+    const active = i===suggestionIndex;
+    el.classList.toggle("active",active);
+    el.setAttribute("aria-selected",String(active));
+
+    if (active) {
+      el.scrollIntoView({block:"nearest"});
+    }
+  });
+}
+
+function selectSuggestion(index) {
+  const selected = visibleMatches[index];
+  if (!selected || !editor) return;
+
+  editor.name = selected;
+  editor.dose = strengths[selected]?.[0] || "";
+
+  document.getElementById("medName").value = selected;
+  document.getElementById("medDose").value = editor.dose;
+
+  hideSuggestions();
+  renderStrengths();
+
+  // Keep editor open after selection.
+  document.getElementById("medDose").focus();
+}
+
+function handleSearchKeyboard(e) {
+  const box = document.getElementById("suggestions");
+  const isOpen = box && !box.classList.contains("hidden");
+
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+
+    if (!isOpen) {
+      showSuggestions();
+    } else if (visibleMatches.length) {
+      suggestionIndex =
+        (suggestionIndex+1)%visibleMatches.length;
+      highlightSuggestion();
+    }
+  }
+
+  if (e.key === "ArrowUp") {
+    e.preventDefault();
+
+    if (!isOpen) {
+      showSuggestions();
+    } else if (visibleMatches.length) {
+      suggestionIndex =
+        (suggestionIndex-1+visibleMatches.length)
+        %visibleMatches.length;
+      highlightSuggestion();
+    }
+  }
+
+  if (e.key === "Enter" && isOpen) {
+    e.preventDefault();
+
+    if (visibleMatches.length) {
+      selectSuggestion(suggestionIndex);
+    }
+  }
+
+  if (e.key === "Escape" && isOpen) {
+    e.preventDefault();
+    hideSuggestions();
+  }
+}
+
+/* ==========================================
+   STRENGTHS + SIDE EFFECTS
+========================================== */
+
+function renderStrengths() {
+  const area = document.getElementById("strengthArea");
+  if (!area || !editor) return;
+
+  const options = strengths[editor.name] || [];
+
+  area.innerHTML = options.length ? `
+    <div class="strengths">
+      ${options.map(s=>`
+        <button type="button"
+          class="strength ${editor.dose===s?"active":""}"
+          data-strength="${escapeHTML(s)}">
+          ${escapeHTML(s)}
+        </button>`).join("")}
+    </div>` : "";
+}
+
+function renderEffectTags() {
+  const area = document.getElementById("effectTags");
+  if (!area || !editor) return;
+
+  area.innerHTML = editor.effects.length ? `
+    <div class="effect-tags">
+      ${editor.effects.map((s,i)=>`
+        <button type="button" class="effect-tag"
+          data-remove-effect="${i}">
+          ${escapeHTML(s)} ×
+        </button>`).join("")}
+    </div>` : "";
+}
+
+function addEffect(value) {
+  const v = value.trim();
+
+  if (v && !editor.effects.includes(v)) {
+    editor.effects.push(v);
+  }
+
+  renderEffectTags();
+}
+
+function showOtherEffect() {
+  document.getElementById("otherEffectArea").innerHTML = `
+    <div class="other-row">
+      <input class="field" id="otherEffect"
+        placeholder="Other side effect">
+      <button class="btn dark" id="addOtherEffect"
+        type="button">+</button>
+    </div>`;
+
+  const input = document.getElementById("otherEffect");
+  input.focus();
+
+  function saveOther() {
+    if (input.value.trim()) {
+      addEffect(input.value);
+      document.getElementById("otherEffectArea").innerHTML="";
+      document.getElementById("sideEffect").value="";
+    }
+  }
+
+  document.getElementById("addOtherEffect")
+    .addEventListener("click",saveOther);
+
+  input.addEventListener("keydown",e=>{
+    if (e.key==="Enter") {
+      e.preventDefault();
+      saveOther();
+    }
+  });
+}
+
+/* ==========================================
+   EDITOR EVENT HANDLERS
+========================================== */
+
+function bindEditorEvents() {
+  const medName = document.getElementById("medName");
+  const medDose = document.getElementById("medDose");
+
+  medName.addEventListener("input",e=>{
+    editor.name=e.target.value;
+    showSuggestions();
+    renderStrengths();
+  });
+
+  medName.addEventListener("keydown",handleSearchKeyboard);
+
+  document.getElementById("showSuggestions")
+    .addEventListener("click",()=>{
+      const box=document.getElementById("suggestions");
+
+      if (box.classList.contains("hidden")) {
+        showSuggestions();
+      } else {
+        hideSuggestions();
+      }
+
+      medName.focus();
+    });
+
+  document.getElementById("suggestions")
+    .addEventListener("click",e=>{
+      const button=e.target.closest("[data-suggestion]");
+      if (button) {
+        selectSuggestion(Number(button.dataset.suggestion));
+      }
+    });
+
+  medDose.addEventListener("input",e=>{
+    editor.dose=e.target.value;
+    renderStrengths();
+  });
+
+  document.getElementById("strengthArea")
+    .addEventListener("click",e=>{
+      const button=e.target.closest("[data-strength]");
+      if (!button) return;
+
+      editor.dose=button.dataset.strength;
+      medDose.value=editor.dose;
+      renderStrengths();
+    });
+
+  document.getElementById("medTime")
+    .addEventListener("change",e=>{
+      editor.time=e.target.value;
+    });
+
+  document.getElementById("sideEffect")
+    .addEventListener("change",e=>{
+      const value=e.target.value;
+
+      if (value==="Other") {
+        showOtherEffect();
+      } else if (value) {
+        addEffect(value);
+        e.target.value="";
+      }
+    });
+
+  document.getElementById("effectTags")
+    .addEventListener("click",e=>{
+      const button=e.target.closest("[data-remove-effect]");
+      if (!button) return;
+
+      editor.effects.splice(
+        Number(button.dataset.removeEffect),1
+      );
+
+      renderEffectTags();
+    });
+
+  document.getElementById("saveMedication")
+    .addEventListener("click",saveEditor);
+
+  document.getElementById("closeEditor")
+    .addEventListener("click",()=>{
+      editor=null;
+      renderEditor();
+    });
+
+  const remove=document.getElementById("removeMedication");
+
+  if (remove) {
+    remove.addEventListener("click",()=>{
+      const id=editor.id;
+      medications=medications.filter(m=>m.id!==id);
+      editor=null;
+      render();
+    });
+  }
+}
+
+/* ==========================================
+   DAILY NOTES
+========================================== */
+
+function openNotes(id) {
+  if (editor) {
+    // Save current medication edits before opening notes.
+    if (!saveEditor()) return;
+  }
+
+  notesEditor={
+    id,
+    text:getRecord(id).notes || ""
+  };
+
+  renderEditor();
+}
+
+function renderNotesEditor() {
+  const area=document.getElementById("editorArea");
+
+  area.innerHTML=`
+    <div class="editor-shell">
+      <div class="editor">
+        <div class="editor-header">
+          <span class="editor-title">Additional Notes</span>
+          <button class="close-button" id="closeNotes"
+            type="button">×</button>
+        </div>
+
+        <textarea id="notesText" class="field"
+          placeholder="Add extra notes or information..."
+        >${escapeHTML(notesEditor.text)}</textarea>
+
+        <div class="editor-actions">
+          <button class="btn" id="cancelNotes"
+            type="button">Cancel</button>
+          <button class="btn dark" id="saveNotes"
+            type="button">Save Notes</button>
+        </div>
+      </div>
+    </div>`;
+
+  const close=()=>{
+    notesEditor=null;
+    renderEditor();
+  };
+
+  document.getElementById("closeNotes")
+    .addEventListener("click",close);
+
+  document.getElementById("cancelNotes")
+    .addEventListener("click",close);
+
+  document.getElementById("saveNotes")
+    .addEventListener("click",()=>{
+      updateRecord(notesEditor.id,{
+        notes:document.getElementById("notesText").value
+      });
+
+      notesEditor=null;
+      render();
+    });
+}
+
+/* ==========================================
+   MAIN EVENTS
+========================================== */
+
+document.getElementById("medicationList")
+  .addEventListener("click",e=>{
+    const med=e.target.closest("[data-med-id]");
+    const notes=e.target.closest("[data-notes-id]");
+
+    if (med) {
+      toggleMedication(med.dataset.medId);
+    } else if (notes) {
+      openNotes(notes.dataset.notesId);
+    }
+  });
+
+document.getElementById("medicationList")
+  .addEventListener("change",e=>{
+    if (!e.target.matches("[data-check-id]")) return;
+
+    updateRecord(e.target.dataset.checkId,{
+      taken:e.target.checked
+    });
+
+    render();
+  });
+
+document.getElementById("addMedication")
+  .addEventListener("click",()=>{
+    if (editor && !saveEditor()) return;
+    openEditor();
+  });
+
+document.getElementById("completeDay")
+  .addEventListener("click",()=>{
+    if (editor && !saveEditor()) return;
+
+    const d=new Date(selectedDate+"T12:00:00");
+    d.setDate(d.getDate()+1);
+
+    selectedDate=localDate(d);
+    editor=null;
+    notesEditor=null;
+
+    // Medication definitions remain.
+    // Daily checkboxes, times, effects and notes
+    // start fresh on the next date.
+    render();
+  });
+
+document.getElementById("datePicker")
+  .addEventListener("change",e=>{
+    if (!e.target.value) return;
+    if (editor && !saveEditor()) {
+      e.target.value=selectedDate;
+      return;
+    }
+
+    selectedDate=e.target.value;
+    editor=null;
+    notesEditor=null;
+    render();
+  });
+
+// Close suggestions when clicking outside search.
+document.addEventListener("click",e=>{
+  if (!e.target.closest(".search-container")) {
+    hideSuggestions();
+  }
+});
+
+// Initial render.
+render();
+
+</script>
+</body>
+</html>
